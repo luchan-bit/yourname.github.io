@@ -3,230 +3,191 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>媽媽萬用清單 - 忙碌中的一點甜</title>
+    <title>身心靈復康導航 - 每日一小步</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap');
-        
         body {
             font-family: 'Noto Sans TC', sans-serif;
-            background-color: #fdf6f0; /* 溫暖的米色背景 */
+            background-color: #f0f4f0; /* 護眼森林綠背景 */
             -webkit-tap-highlight-color: transparent;
         }
-
-        .category-btn.active {
-            background-color: #6366f1;
-            color: white;
-            transform: scale(1.05);
+        .tab-active {
+            border-bottom: 4px solid #059669;
+            color: #059669;
         }
-
-        .task-card {
-            transition: all 0.2s ease;
-        }
-
-        /* 針對手機單手操作優化的按鈕 */
-        .big-button {
-            min-height: 54px;
-        }
-
-        /* 儲存成功的微動畫 */
-        @keyframes saved-pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.02); color: #4f46e5; }
-            100% { transform: scale(1); }
-        }
-        .saved-confirm {
-            animation: saved-pulse 0.5s ease-in-out;
+        .progress-circle {
+            transition: stroke-dashoffset 0.5s ease;
         }
     </style>
 </head>
-<body class="pb-10">
+<body class="pb-24">
 
-    <!-- 頂部標題 -->
-    <header class="bg-white px-6 py-8 shadow-sm rounded-b-[40px] text-center mb-6">
-        <h1 id="main-title" class="text-2xl font-bold text-gray-800 transition-colors duration-300">辛苦喇，媽媽 ❤️</h1>
-        <p class="text-gray-500 text-sm mt-1">今日想處理邊樣嘢先？</p>
+    <!-- 頂部標題與免責聲明 -->
+    <header class="bg-white px-6 py-6 shadow-sm text-center">
+        <h1 class="text-xl font-bold text-emerald-800">身心靈復康導航 🌿</h1>
+        <p class="text-xs text-gray-400 mt-1 italic">註：本計劃為輔助參考，開始前請務必諮詢主診醫生意見。</p>
     </header>
+
+    <!-- 進度圓環 -->
+    <div class="flex justify-center my-6">
+        <div class="relative flex items-center justify-center">
+            <svg class="w-32 h-32">
+                <circle cx="64" cy="64" r="58" stroke="#e5e7eb" stroke-width="8" fill="transparent" />
+                <circle id="progressBar" cx="64" cy="64" r="58" stroke="#10b981" stroke-width="8" fill="transparent" 
+                    stroke-dasharray="364.4" stroke-dashoffset="364.4" transform="rotate(-90 64 64)" class="progress-circle" />
+            </svg>
+            <div class="absolute text-center">
+                <span id="progressText" class="text-2xl font-bold text-emerald-700">0%</span>
+                <p class="text-[10px] text-gray-500">今日完成度</p>
+            </div>
+        </div>
+    </div>
 
     <main class="max-w-md mx-auto px-4">
         
-        <!-- 輸入區域 -->
-        <div class="bg-white rounded-3xl p-6 shadow-md mb-8">
-            <div class="space-y-4">
-                <!-- 類別選擇 (大按鈕) -->
-                <div class="grid grid-cols-2 gap-3" id="category-group">
-                    <button onclick="selectCategory('🏠 家務')" class="category-btn bg-gray-100 py-3 rounded-2xl text-lg font-medium border-2 border-transparent">🏠 家務</button>
-                    <button onclick="selectCategory('🤝 輔導')" class="category-btn bg-gray-100 py-3 rounded-2xl text-lg font-medium border-2 border-transparent">🤝 輔導</button>
-                    <button onclick="selectCategory('🙏 靈修')" class="category-btn bg-gray-100 py-3 rounded-2xl text-lg font-medium border-2 border-transparent">🙏 靈修</button>
-                    <button onclick="selectCategory('☕ ME TIME')" class="category-btn bg-gray-100 py-3 rounded-2xl text-lg font-medium border-2 border-transparent">☕ ME TIME</button>
-                    <button onclick="selectCategory('⛪ 教會嘢')" class="category-btn bg-gray-100 py-3 rounded-2xl text-lg font-medium border-2 border-transparent">⛪ 教會嘢</button>
-                    <button onclick="selectCategory('🍳 煮飯')" class="category-btn bg-gray-100 py-3 rounded-2xl text-lg font-medium border-2 border-transparent">🍳 煮飯</button>
-                </div>
+        <!-- 復康任務列表 -->
+        <div id="rehabList" class="space-y-4">
+            <!-- 任務會由 JS 渲染 -->
+        </div>
 
-                <!-- 時間與描述 -->
-                <div class="flex space-x-2">
-                    <input type="time" id="taskTime" class="w-1/3 p-4 bg-gray-50 rounded-2xl border-none text-lg focus:ring-2 focus:ring-indigo-200 outline-none">
-                    <input type="text" id="taskDesc" placeholder="仲有咩特別要記？" class="w-2/3 p-4 bg-gray-50 rounded-2xl border-none text-lg focus:ring-2 focus:ring-indigo-200 outline-none">
-                </div>
-
-                <!-- 新增按鈕 -->
-                <button onclick="addTask()" class="w-full big-button bg-indigo-500 hover:bg-indigo-600 text-white rounded-2xl text-xl font-bold shadow-lg shadow-indigo-100 transition-all active:scale-95">
-                    記低佢 (自動儲存)
+        <!-- 呼吸練習計時器 (肺癌康復重點) -->
+        <div class="mt-8 bg-emerald-800 rounded-3xl p-6 text-white shadow-lg">
+            <h3 class="text-lg font-bold mb-2 flex items-center">
+                <span class="mr-2">🫁</span> 縮唇呼吸練習 (Pursed-lip Breathing)
+            </h3>
+            <p class="text-xs text-emerald-200 mb-4">用鼻吸氣 2 秒，縮起嘴唇像吹蠟燭般慢慢呼氣 4 秒。</p>
+            <div class="flex items-center justify-between">
+                <div class="text-3xl font-mono font-bold" id="timerDisplay">05:00</div>
+                <button id="timerBtn" onclick="toggleTimer()" class="bg-white text-emerald-800 px-6 py-2 rounded-full font-bold active:scale-95 transition-all">
+                    開始練習
                 </button>
             </div>
         </div>
 
-        <!-- 任務列表 -->
-        <div id="taskList" class="space-y-4">
-            <!-- 任務會在這裡出現 -->
+        <!-- 每日靈修/情緒金句 -->
+        <div class="mt-8 bg-white p-6 rounded-3xl shadow-sm border-l-4 border-emerald-500">
+            <p id="quoteDisplay" class="text-gray-700 leading-relaxed italic">「應當一無掛慮，只要凡事藉著禱告、祈求，和感謝，將你們所要的告訴神。」</p>
+            <p class="text-xs text-gray-400 mt-2 text-right">— 腓立比書 4:6</p>
         </div>
 
-        <!-- 清空按鈕 -->
-        <div class="mt-10 text-center">
-            <button onclick="clearAll()" class="text-gray-400 text-sm underline">清空全部紀錄</button>
-        </div>
     </main>
 
-    <script>
-        let selectedCategory = '';
-        // 從 localStorage 讀取現有資料
-        let tasks = JSON.parse(localStorage.getItem('mama_tasks')) || [];
+    <!-- 底部清空紀錄 -->
+    <footer class="mt-10 text-center px-4">
+        <button onclick="resetDaily()" class="text-gray-400 text-sm underline">新的一天：重設進度</button>
+    </footer>
 
-        // 初始化
+    <script>
+        const tasksData = [
+            { id: 1, title: '洗肺操 (呼吸訓練)', sub: '早午晚各 5-10 分鐘', category: '身', icon: '🌬️' },
+            { id: 2, title: '平路散步', sub: '每日 15-20 分鐘，不宜過勞', category: '身', icon: '🚶' },
+            { id: 3, title: '高營養飲食', sub: '補充足夠蛋白質 (肉/蛋/奶)', category: '食', icon: '🥚' },
+            { id: 4, title: '情緒/靈修時間', sub: '寫日記、禱告或靜坐 10 分鐘', category: '心', icon: '🙏' },
+            { id: 5, title: '充足睡眠', sub: '晚上 11 點前休息', category: '息', icon: '🌙' }
+        ];
+
+        let completedTasks = JSON.parse(localStorage.getItem('rehab_completed')) || [];
+        let timerSeconds = 300;
+        let timerInterval = null;
+
         window.onload = () => {
             renderTasks();
-            // 預設選中第一個類別
-            selectCategory('🏠 家務');
+            updateProgress();
         };
 
-        // 選擇類別
-        function selectCategory(cat) {
-            selectedCategory = cat;
-            const btns = document.querySelectorAll('.category-btn');
-            btns.forEach(btn => {
-                if (btn.innerText === cat) {
-                    btn.classList.add('active', 'border-indigo-500');
-                    btn.classList.remove('bg-gray-100');
-                } else {
-                    btn.classList.remove('active', 'border-indigo-500');
-                    btn.classList.add('bg-gray-100');
-                }
-            });
-        }
-
-        // 新增任務核心函數
-        function addTask() {
-            const timeField = document.getElementById('taskTime');
-            const descField = document.getElementById('taskDesc');
-            const time = timeField.value;
-            const desc = descField.value;
-
-            if (!selectedCategory) return showMsg('揀個類別先啦');
-            if (!desc) return showMsg('填返要做咩呀');
-
-            const newTask = {
-                id: Date.now(),
-                category: selectedCategory,
-                time: time || '--:--',
-                desc: desc,
-                done: false
-            };
-
-            // 將新任務加入陣列最前端
-            tasks.unshift(newTask);
-            
-            // 呼叫儲存與渲染函數
-            saveAndRender();
-            
-            // 視覺回饋：標題閃爍一下，確認已存檔
-            showStorageSuccess();
-            
-            // 重置輸入欄位
-            descField.value = '';
-        }
-
-        // 核心存儲邏輯：將資料寫入 localStorage 並重新繪製介面
-        function saveAndRender() {
-            try {
-                localStorage.setItem('mama_tasks', JSON.stringify(tasks));
-                renderTasks();
-            } catch (e) {
-                console.error("儲存失敗：", e);
-                showMsg('存儲空間好似滿咗，清下佢啦');
-            }
-        }
-
-        // 渲染列表
         function renderTasks() {
-            const list = document.getElementById('taskList');
+            const list = document.getElementById('rehabList');
             list.innerHTML = '';
 
-            if (tasks.length === 0) {
-                list.innerHTML = `<div class="text-center py-10 text-gray-400 animate-pulse">暫時冇嘢做，休息下先 ☕</div>`;
-                return;
-            }
-
-            tasks.forEach(task => {
-                const card = document.createElement('div');
-                card.className = `task-card bg-white p-5 rounded-3xl shadow-sm flex items-center justify-between ${task.done ? 'opacity-50' : ''}`;
-                card.innerHTML = `
-                    <div class="flex-1" onclick="toggleTask(${task.id})">
-                        <div class="flex items-center space-x-2">
-                            <span class="text-xs font-bold px-2 py-1 bg-indigo-50 text-indigo-600 rounded-lg">${task.category}</span>
-                            <span class="text-gray-400 text-sm">${task.time}</span>
+            tasksData.forEach(task => {
+                const isDone = completedTasks.includes(task.id);
+                const item = document.createElement('div');
+                item.className = `bg-white p-5 rounded-3xl shadow-sm flex items-center justify-between transition-all ${isDone ? 'opacity-60 grayscale' : ''}`;
+                item.innerHTML = `
+                    <div class="flex items-center space-x-4">
+                        <div class="w-12 h-12 bg-emerald-50 rounded-2xl flex items-center justify-center text-2xl">
+                            ${task.icon}
                         </div>
-                        <p class="text-lg font-medium mt-1 ${task.done ? 'line-through text-gray-400' : 'text-gray-800'}">${task.desc}</p>
+                        <div>
+                            <h4 class="font-bold text-gray-800">${task.title}</h4>
+                            <p class="text-xs text-gray-400">${task.sub}</p>
+                        </div>
                     </div>
-                    <div class="flex space-x-2 ml-4">
-                        <button onclick="toggleTask(${task.id})" class="p-3 bg-green-50 text-green-600 rounded-full active:scale-90">
-                            ${task.done ? '↩️' : '✅'}
-                        </button>
-                        <button onclick="deleteTask(${task.id})" class="p-3 bg-red-50 text-red-400 rounded-full active:scale-90">
-                            🗑️
-                        </button>
-                    </div>
+                    <button onclick="toggleTask(${task.id})" class="w-10 h-10 rounded-full border-2 ${isDone ? 'bg-emerald-500 border-emerald-500' : 'border-gray-200'} flex items-center justify-center">
+                        ${isDone ? '✅' : ''}
+                    </button>
                 `;
-                list.appendChild(card);
+                list.appendChild(item);
             });
         }
 
         function toggleTask(id) {
-            tasks = tasks.map(t => t.id === id ? {...t, done: !t.done} : t);
-            saveAndRender();
+            if (completedTasks.includes(id)) {
+                completedTasks = completedTasks.filter(tid => tid !== id);
+            } else {
+                completedTasks.push(id);
+                // 震動反饋 (手機端)
+                if (navigator.vibrate) navigator.vibrate(50);
+            }
+            localStorage.setItem('rehab_completed', JSON.stringify(completedTasks));
+            renderTasks();
+            updateProgress();
         }
 
-        function deleteTask(id) {
-            tasks = tasks.filter(t => t.id !== id);
-            saveAndRender();
+        function updateProgress() {
+            const percent = Math.round((completedTasks.length / tasksData.length) * 100);
+            document.getElementById('progressText').innerText = percent + '%';
+            
+            const circle = document.getElementById('progressBar');
+            const circumference = 58 * 2 * Math.PI;
+            const offset = circumference - (percent / 100 * circumference);
+            circle.style.strokeDashoffset = offset;
         }
 
-        function clearAll() {
-            if (confirm('係咪真係要清空晒所有紀錄？')) {
-                tasks = [];
-                localStorage.removeItem('mama_tasks'); // 直接從硬碟移除
-                renderTasks();
-                showMsg('紀錄已清空');
+        function toggleTimer() {
+            const btn = document.getElementById('timerBtn');
+            if (timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+                btn.innerText = '繼續練習';
+                btn.className = "bg-white text-emerald-800 px-6 py-2 rounded-full font-bold active:scale-95";
+            } else {
+                btn.innerText = '暫停';
+                btn.className = "bg-emerald-600 text-white px-6 py-2 rounded-full font-bold active:scale-95";
+                timerInterval = setInterval(() => {
+                    if (timerSeconds > 0) {
+                        timerSeconds--;
+                        updateTimerDisplay();
+                    } else {
+                        clearInterval(timerInterval);
+                        alert('練習完成！呼吸順暢晒！');
+                        resetTimer();
+                    }
+                }, 1000);
             }
         }
 
-        function showMsg(txt) {
-            const header = document.getElementById('main-title');
-            const original = header.innerText;
-            header.innerText = txt;
-            header.classList.add('text-red-500');
-            setTimeout(() => {
-                header.innerText = original;
-                header.classList.remove('text-red-500');
-            }, 2000);
+        function updateTimerDisplay() {
+            const mins = Math.floor(timerSeconds / 60);
+            const secs = timerSeconds % 60;
+            document.getElementById('timerDisplay').innerText = 
+                `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
         }
 
-        // 存儲成功的視覺效果
-        function showStorageSuccess() {
-            const header = document.getElementById('main-title');
-            header.classList.add('saved-confirm');
-            setTimeout(() => {
-                header.classList.remove('saved-confirm');
-            }, 500);
+        function resetTimer() {
+            timerSeconds = 300;
+            updateTimerDisplay();
+            document.getElementById('timerBtn').innerText = '開始練習';
+        }
+
+        function resetDaily() {
+            if(confirm('係咪新的一天？將會重設進度紀錄。')) {
+                completedTasks = [];
+                localStorage.setItem('rehab_completed', JSON.stringify(completedTasks));
+                renderTasks();
+                updateProgress();
+            }
         }
     </script>
 </body>
