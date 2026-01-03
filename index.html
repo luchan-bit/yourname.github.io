@@ -28,13 +28,23 @@
         .big-button {
             min-height: 54px;
         }
+
+        /* 儲存成功的微動畫 */
+        @keyframes saved-pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.02); color: #4f46e5; }
+            100% { transform: scale(1); }
+        }
+        .saved-confirm {
+            animation: saved-pulse 0.5s ease-in-out;
+        }
     </style>
 </head>
 <body class="pb-10">
 
     <!-- 頂部標題 -->
     <header class="bg-white px-6 py-8 shadow-sm rounded-b-[40px] text-center mb-6">
-        <h1 class="text-2xl font-bold text-gray-800">辛苦喇，媽媽 ❤️</h1>
+        <h1 id="main-title" class="text-2xl font-bold text-gray-800 transition-colors duration-300">辛苦喇，媽媽 ❤️</h1>
         <p class="text-gray-500 text-sm mt-1">今日想處理邊樣嘢先？</p>
     </header>
 
@@ -61,7 +71,7 @@
 
                 <!-- 新增按鈕 -->
                 <button onclick="addTask()" class="w-full big-button bg-indigo-500 hover:bg-indigo-600 text-white rounded-2xl text-xl font-bold shadow-lg shadow-indigo-100 transition-all active:scale-95">
-                    記低佢
+                    記低佢 (自動儲存)
                 </button>
             </div>
         </div>
@@ -79,6 +89,7 @@
 
     <script>
         let selectedCategory = '';
+        // 從 localStorage 讀取現有資料
         let tasks = JSON.parse(localStorage.getItem('mama_tasks')) || [];
 
         // 初始化
@@ -103,32 +114,46 @@
             });
         }
 
-        // 新增任務
+        // 新增任務核心函數
         function addTask() {
-            const time = document.getElementById('taskTime').value;
-            const desc = document.getElementById('taskDesc').value;
+            const timeField = document.getElementById('taskTime');
+            const descField = document.getElementById('taskDesc');
+            const time = timeField.value;
+            const desc = descField.value;
 
             if (!selectedCategory) return showMsg('揀個類別先啦');
+            if (!desc) return showMsg('填返要做咩呀');
 
             const newTask = {
                 id: Date.now(),
                 category: selectedCategory,
                 time: time || '--:--',
-                desc: desc || '冇備註',
+                desc: desc,
                 done: false
             };
 
+            // 將新任務加入陣列最前端
             tasks.unshift(newTask);
+            
+            // 呼叫儲存與渲染函數
             saveAndRender();
             
-            // 重置輸入
-            document.getElementById('taskDesc').value = '';
+            // 視覺回饋：標題閃爍一下，確認已存檔
+            showStorageSuccess();
+            
+            // 重置輸入欄位
+            descField.value = '';
         }
 
-        // 存儲並渲染
+        // 核心存儲邏輯：將資料寫入 localStorage 並重新繪製介面
         function saveAndRender() {
-            localStorage.setItem('mama_tasks', JSON.stringify(tasks));
-            renderTasks();
+            try {
+                localStorage.setItem('mama_tasks', JSON.stringify(tasks));
+                renderTasks();
+            } catch (e) {
+                console.error("儲存失敗：", e);
+                showMsg('存儲空間好似滿咗，清下佢啦');
+            }
         }
 
         // 渲染列表
@@ -137,7 +162,7 @@
             list.innerHTML = '';
 
             if (tasks.length === 0) {
-                list.innerHTML = `<div class="text-center py-10 text-gray-400">暫時冇嘢做，休息下先 ☕</div>`;
+                list.innerHTML = `<div class="text-center py-10 text-gray-400 animate-pulse">暫時冇嘢做，休息下先 ☕</div>`;
                 return;
             }
 
@@ -178,13 +203,14 @@
         function clearAll() {
             if (confirm('係咪真係要清空晒所有紀錄？')) {
                 tasks = [];
-                saveAndRender();
+                localStorage.removeItem('mama_tasks'); // 直接從硬碟移除
+                renderTasks();
+                showMsg('紀錄已清空');
             }
         }
 
         function showMsg(txt) {
-            // 代替 alert 的簡單提示
-            const header = document.querySelector('h1');
+            const header = document.getElementById('main-title');
             const original = header.innerText;
             header.innerText = txt;
             header.classList.add('text-red-500');
@@ -192,6 +218,15 @@
                 header.innerText = original;
                 header.classList.remove('text-red-500');
             }, 2000);
+        }
+
+        // 存儲成功的視覺效果
+        function showStorageSuccess() {
+            const header = document.getElementById('main-title');
+            header.classList.add('saved-confirm');
+            setTimeout(() => {
+                header.classList.remove('saved-confirm');
+            }, 500);
         }
     </script>
 </body>
