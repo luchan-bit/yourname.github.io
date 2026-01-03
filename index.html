@@ -2,193 +2,374 @@
 <html lang="zh-HK">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>身心靈復康導航 - 每日一小步</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>中四上學期六科全能模擬考卷 (Total: 100 Marks)</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap');
-        body {
-            font-family: 'Noto Sans TC', sans-serif;
-            background-color: #f0f4f0; /* 護眼森林綠背景 */
-            -webkit-tap-highlight-color: transparent;
-        }
-        .tab-active {
-            border-bottom: 4px solid #059669;
-            color: #059669;
-        }
-        .progress-circle {
-            transition: stroke-dashoffset 0.5s ease;
-        }
-    </style>
-</head>
-<body class="pb-24">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.0/es5/tex-mml-chtml.js"></script>
+    <!-- Firebase Imports -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-    <!-- 頂部標題與免責聲明 -->
-    <header class="bg-white px-6 py-6 shadow-sm text-center">
-        <h1 class="text-xl font-bold text-emerald-800">身心靈復康導航 🌿</h1>
-        <p class="text-xs text-gray-400 mt-1 italic">註：本計劃為輔助參考，開始前請務必諮詢主診醫生意見。</p>
-    </header>
-
-    <!-- 進度圓環 -->
-    <div class="flex justify-center my-6">
-        <div class="relative flex items-center justify-center">
-            <svg class="w-32 h-32">
-                <circle cx="64" cy="64" r="58" stroke="#e5e7eb" stroke-width="8" fill="transparent" />
-                <circle id="progressBar" cx="64" cy="64" r="58" stroke="#10b981" stroke-width="8" fill="transparent" 
-                    stroke-dasharray="364.4" stroke-dashoffset="364.4" transform="rotate(-90 64 64)" class="progress-circle" />
-            </svg>
-            <div class="absolute text-center">
-                <span id="progressText" class="text-2xl font-bold text-emerald-700">0%</span>
-                <p class="text-[10px] text-gray-500">今日完成度</p>
-            </div>
-        </div>
-    </div>
-
-    <main class="max-w-md mx-auto px-4">
-        
-        <!-- 復康任務列表 -->
-        <div id="rehabList" class="space-y-4">
-            <!-- 任務會由 JS 渲染 -->
-        </div>
-
-        <!-- 呼吸練習計時器 (肺癌康復重點) -->
-        <div class="mt-8 bg-emerald-800 rounded-3xl p-6 text-white shadow-lg">
-            <h3 class="text-lg font-bold mb-2 flex items-center">
-                <span class="mr-2">🫁</span> 縮唇呼吸練習 (Pursed-lip Breathing)
-            </h3>
-            <p class="text-xs text-emerald-200 mb-4">用鼻吸氣 2 秒，縮起嘴唇像吹蠟燭般慢慢呼氣 4 秒。</p>
-            <div class="flex items-center justify-between">
-                <div class="text-3xl font-mono font-bold" id="timerDisplay">05:00</div>
-                <button id="timerBtn" onclick="toggleTimer()" class="bg-white text-emerald-800 px-6 py-2 rounded-full font-bold active:scale-95 transition-all">
-                    開始練習
-                </button>
-            </div>
-        </div>
-
-        <!-- 每日靈修/情緒金句 -->
-        <div class="mt-8 bg-white p-6 rounded-3xl shadow-sm border-l-4 border-emerald-500">
-            <p id="quoteDisplay" class="text-gray-700 leading-relaxed italic">「應當一無掛慮，只要凡事藉著禱告、祈求，和感謝，將你們所要的告訴神。」</p>
-            <p class="text-xs text-gray-400 mt-2 text-right">— 腓立比書 4:6</p>
-        </div>
-
-    </main>
-
-    <!-- 底部清空紀錄 -->
-    <footer class="mt-10 text-center px-4">
-        <button onclick="resetDaily()" class="text-gray-400 text-sm underline">新的一天：重設進度</button>
-    </footer>
-
-    <script>
-        const tasksData = [
-            { id: 1, title: '洗肺操 (呼吸訓練)', sub: '早午晚各 5-10 分鐘', category: '身', icon: '🌬️' },
-            { id: 2, title: '平路散步', sub: '每日 15-20 分鐘，不宜過勞', category: '身', icon: '🚶' },
-            { id: 3, title: '高營養飲食', sub: '補充足夠蛋白質 (肉/蛋/奶)', category: '食', icon: '🥚' },
-            { id: 4, title: '情緒/靈修時間', sub: '寫日記、禱告或靜坐 10 分鐘', category: '心', icon: '🙏' },
-            { id: 5, title: '充足睡眠', sub: '晚上 11 點前休息', category: '息', icon: '🌙' }
-        ];
-
-        let completedTasks = JSON.parse(localStorage.getItem('rehab_completed')) || [];
-        let timerSeconds = 300;
-        let timerInterval = null;
-
-        window.onload = () => {
-            renderTasks();
-            updateProgress();
+        // Global State
+        let db, auth, user, appId;
+        const examState = {
+            scores: {},
+            submitted: false
         };
 
-        function renderTasks() {
-            const list = document.getElementById('rehabList');
-            list.innerHTML = '';
-
-            tasksData.forEach(task => {
-                const isDone = completedTasks.includes(task.id);
-                const item = document.createElement('div');
-                item.className = `bg-white p-5 rounded-3xl shadow-sm flex items-center justify-between transition-all ${isDone ? 'opacity-60 grayscale' : ''}`;
-                item.innerHTML = `
-                    <div class="flex items-center space-x-4">
-                        <div class="w-12 h-12 bg-emerald-50 rounded-2xl flex items-center justify-center text-2xl">
-                            ${task.icon}
-                        </div>
-                        <div>
-                            <h4 class="font-bold text-gray-800">${task.title}</h4>
-                            <p class="text-xs text-gray-400">${task.sub}</p>
-                        </div>
-                    </div>
-                    <button onclick="toggleTask(${task.id})" class="w-10 h-10 rounded-full border-2 ${isDone ? 'bg-emerald-500 border-emerald-500' : 'border-gray-200'} flex items-center justify-center">
-                        ${isDone ? '✅' : ''}
-                    </button>
-                `;
-                list.appendChild(item);
-            });
-        }
-
-        function toggleTask(id) {
-            if (completedTasks.includes(id)) {
-                completedTasks = completedTasks.filter(tid => tid !== id);
-            } else {
-                completedTasks.push(id);
-                // 震動反饋 (手機端)
-                if (navigator.vibrate) navigator.vibrate(50);
-            }
-            localStorage.setItem('rehab_completed', JSON.stringify(completedTasks));
-            renderTasks();
-            updateProgress();
-        }
-
-        function updateProgress() {
-            const percent = Math.round((completedTasks.length / tasksData.length) * 100);
-            document.getElementById('progressText').innerText = percent + '%';
+        window.onload = async () => {
+            const firebaseConfig = JSON.parse(decodeURIComponent(document.body.dataset.fbConfig || "{}"));
+            appId = document.body.dataset.appId || "f4-exam-default";
             
-            const circle = document.getElementById('progressBar');
-            const circumference = 58 * 2 * Math.PI;
-            const offset = circumference - (percent / 100 * circumference);
-            circle.style.strokeDashoffset = offset;
+            const app = initializeApp(firebaseConfig);
+            auth = getAuth(app);
+            db = getFirestore(app);
+
+            // Rule 3: Auth Before Queries
+            const initAuth = async () => {
+                const token = document.body.dataset.authToken;
+                if (token && token !== "undefined") {
+                    await signInWithCustomToken(auth, token);
+                } else {
+                    await signInAnonymously(auth);
+                }
+            };
+
+            await initAuth();
+            onAuthStateChanged(auth, (u) => {
+                user = u;
+                if (user) {
+                    loadHistory();
+                }
+            });
+        };
+
+        async function saveScore(score) {
+            if (!user) return;
+            const ref = doc(db, 'artifacts', appId, 'users', user.uid, 'exam_results', 'term1_final');
+            await setDoc(ref, {
+                score: score,
+                timestamp: new Date().toISOString(),
+                userId: user.uid
+            });
+            document.getElementById('save-status').innerText = "成績已成功存檔於雲端！";
         }
 
-        function toggleTimer() {
-            const btn = document.getElementById('timerBtn');
-            if (timerInterval) {
-                clearInterval(timerInterval);
-                timerInterval = null;
-                btn.innerText = '繼續練習';
-                btn.className = "bg-white text-emerald-800 px-6 py-2 rounded-full font-bold active:scale-95";
-            } else {
-                btn.innerText = '暫停';
-                btn.className = "bg-emerald-600 text-white px-6 py-2 rounded-full font-bold active:scale-95";
-                timerInterval = setInterval(() => {
-                    if (timerSeconds > 0) {
-                        timerSeconds--;
-                        updateTimerDisplay();
-                    } else {
-                        clearInterval(timerInterval);
-                        alert('練習完成！呼吸順暢晒！');
-                        resetTimer();
-                    }
-                }, 1000);
+        async function loadHistory() {
+            if (!user) return;
+            const ref = doc(db, 'artifacts', appId, 'users', user.uid, 'exam_results', 'term1_final');
+            const snap = await getDoc(ref);
+            if (snap.exists()) {
+                document.getElementById('history').innerText = `上次記錄成績: ${snap.data().score}/100`;
             }
         }
 
-        function updateTimerDisplay() {
-            const mins = Math.floor(timerSeconds / 60);
-            const secs = timerSeconds % 60;
-            document.getElementById('timerDisplay').innerText = 
-                `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-        }
+        window.submitExam = () => {
+            let total = 0;
+            // MC Scoring (24 Marks total, 2m each)
+            const mcAnswers = {
+                'mc-q1': 'B', 'mc-q2': 'D', // Chinese
+                'mc-q3': 'C', 'mc-q4': 'B', // Math
+                'mc-q5': 'B', 'mc-q6': 'A', // Chem
+                'mc-q7': 'B', 'mc-q8': 'C', // Eng
+                'mc-q9': 'B', 'mc-q10': 'C', // Geog
+                'mc-q11': 'C', 'mc-q12': 'B' // CSD
+            };
 
-        function resetTimer() {
-            timerSeconds = 300;
-            updateTimerDisplay();
-            document.getElementById('timerBtn').innerText = '開始練習';
-        }
+            Object.keys(mcAnswers).forEach(id => {
+                const selected = document.querySelector(`input[name="${id}"]:checked`);
+                if (selected && selected.value === mcAnswers[id]) {
+                    total += 2;
+                }
+            });
 
-        function resetDaily() {
-            if(confirm('係咪新的一天？將會重設進度紀錄。')) {
-                completedTasks = [];
-                localStorage.setItem('rehab_completed', JSON.stringify(completedTasks));
-                renderTasks();
-                updateProgress();
-            }
-        }
+            // For Short/Long questions, we prompt user to self-grade based on sample answers
+            document.getElementById('results-section').classList.remove('hidden');
+            document.getElementById('exam-form').classList.add('opacity-50', 'pointer-events-none');
+            document.getElementById('final-score-display').innerText = `MC 得分: ${total} / 24`;
+            
+            // Show rationale/answers
+            document.querySelectorAll('.sample-answer').forEach(el => el.classList.remove('hidden'));
+            
+            saveScore(total);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        };
     </script>
+    <style>
+        .subject-card { @apply bg-white p-6 rounded-xl shadow-sm border border-slate-100 mb-8; }
+        .question-title { @apply font-bold text-slate-800 mb-2 block; }
+        .option-label { @apply flex items-center space-x-3 p-3 rounded-lg border border-slate-200 cursor-pointer hover:bg-blue-50 transition; }
+        .sample-answer { @apply mt-4 p-4 bg-green-50 border-l-4 border-green-500 text-sm text-green-800; }
+        .mark { @apply text-red-500 font-medium; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900 font-sans" 
+      data-fb-config='{"apiKey":"","authDomain":"","projectId":"","storageBucket":"","messagingSenderId":"","appId":""}'
+      data-app-id="f4_term1_mock_exam">
+
+    <div class="max-w-4xl mx-auto py-12 px-4">
+        <header class="text-center mb-12">
+            <h1 class="text-3xl font-extrabold text-slate-900 mb-2">中四級上學期全科模擬考卷</h1>
+            <p class="text-slate-500 italic">S4 1st Term Comprehensive Examination (2025/26)</p>
+            <div class="flex justify-center items-center space-x-4 mt-4">
+                <span class="bg-blue-600 text-white px-4 py-1 rounded-full text-sm">Time: 120 Minutes</span>
+                <span class="bg-red-600 text-white px-4 py-1 rounded-full text-sm">Full Marks: 100</span>
+            </div>
+            <p id="history" class="mt-4 text-sm font-medium text-slate-600"></p>
+        </header>
+
+        <div id="results-section" class="hidden bg-blue-600 text-white p-6 rounded-xl mb-8 text-center animate-bounce">
+            <h2 class="text-2xl font-bold">考卷已提交！</h2>
+            <p id="final-score-display"></p>
+            <p class="text-xs mt-2">請對照下方的「參考答案」為你的短題目與長題目自評分數。</p>
+            <p id="save-status" class="font-bold mt-1 text-yellow-300"></p>
+        </div>
+
+        <form id="exam-form">
+
+            <!-- 1. 中文科 -->
+            <section class="subject-card">
+                <h2 class="text-xl font-bold text-blue-700 mb-4 border-b pb-2">1. 中文科 (Chinese Language) - 16分</h2>
+                
+                <div class="mb-6">
+                    <span class="question-title">Q1. 在《論仁、論孝、論君子》中，孔子認為「仁」的實踐應從何處開始？ <span class="mark">[2]</span></span>
+                    <div class="space-y-2">
+                        <label class="option-label"><input type="radio" name="mc-q1" value="A"> <span>A. 博學於文</span></label>
+                        <label class="option-label"><input type="radio" name="mc-q1" value="B"> <span>B. 孝悌</span></label>
+                        <label class="option-label"><input type="radio" name="mc-q1" value="C"> <span>C. 禮樂</span></label>
+                        <label class="option-label"><input type="radio" name="mc-q1" value="D"> <span>D. 忠恕</span></label>
+                    </div>
+                </div>
+
+                <div class="mb-6">
+                    <span class="question-title">Q2. 下列哪一項最符合「書信」的書寫規範？ <span class="mark">[2]</span></span>
+                    <div class="space-y-2">
+                        <label class="option-label"><input type="radio" name="mc-q2" value="A"> <span>A. 啟辭必須包含對收信人的讚美</span></label>
+                        <label class="option-label"><input type="radio" name="mc-q2" value="B"> <span>B. 結語必須在正文最後一段後換行頂格寫</span></label>
+                        <label class="option-label"><input type="radio" name="mc-q2" value="C"> <span>C. 簽署時必須只寫姓，不寫名</span></label>
+                        <label class="option-label"><input type="radio" name="mc-q2" value="D"> <span>D. 祝頌語應視乎收信人的身分而調整</span></label>
+                    </div>
+                </div>
+
+                <div class="mb-6">
+                    <span class="question-title">Q3. 短問答：孔子如何解釋「克己復禮為仁」？ <span class="mark">[4]</span></span>
+                    <textarea class="w-full border p-3 rounded-lg h-24" placeholder="請在此輸入答案..."></textarea>
+                    <div class="sample-answer hidden">
+                        <strong>參考答案：</strong> 意指約束自己的慾望，使言行舉止符合禮的規範。只要能做到這一點，天下的人都會歸許其仁德。具體實踐包括：非禮勿視、非禮勿聽、非禮勿言、非禮勿動。
+                    </div>
+                </div>
+
+                <div class="mb-6">
+                    <span class="question-title">Q4. 長題目：試說明在記敘文中，「藉事抒情」相比「直接抒情」有何優點？ <span class="mark">[8]</span></span>
+                    <textarea class="w-full border p-3 rounded-lg h-32" placeholder="請在此輸入答案..."></textarea>
+                    <div class="sample-answer hidden">
+                        <strong>參考答案：</strong> 1. 感染力更強：透過具體細節描寫，讓讀者感同身受，而非枯燥地說教。2. 情感含蓄真摯：情感寄託在事物或行為中，更加深刻。3. 避免空洞：有事實支撐的情感更具說服力。
+                    </div>
+                </div>
+            </section>
+
+            <!-- 2. Mathematics -->
+            <section class="subject-card">
+                <h2 class="text-xl font-bold text-blue-700 mb-4 border-b pb-2">2. Mathematics - 16分</h2>
+                
+                <div class="mb-6">
+                    <span class="question-title">Q5. For the quadratic equation $x^2 + 4x + 4 = 0$, what is the number of real roots? <span class="mark">[2]</span></span>
+                    <div class="space-y-2">
+                        <label class="option-label"><input type="radio" name="mc-q3" value="A"> <span>A. No real roots</span></label>
+                        <label class="option-label"><input type="radio" name="mc-q3" value="B"> <span>B. Two distinct real roots</span></label>
+                        <label class="option-label"><input type="radio" name="mc-q3" value="C"> <span>C. One equal real root</span></label>
+                        <label class="option-label"><input type="radio" name="mc-q3" value="D"> <span>D. Infinitely many</span></label>
+                    </div>
+                </div>
+
+                <div class="mb-6">
+                    <span class="question-title">Q6. Given $f(x) = x^2 - 4x + 7$. What is the coordinates of the vertex? <span class="mark">[2]</span></span>
+                    <div class="space-y-2">
+                        <label class="option-label"><input type="radio" name="mc-q4" value="A"> <span>A. $(4, 7)$</span></label>
+                        <label class="option-label"><input type="radio" name="mc-q4" value="B"> <span>B. $(2, 3)$</span></label>
+                        <label class="option-label"><input type="radio" name="mc-q4" value="C"> <span>C. $(-2, 3)$</span></label>
+                        <label class="option-label"><input type="radio" name="mc-q4" value="D"> <span>D. $(2, 7)$</span></label>
+                    </div>
+                </div>
+
+                <div class="mb-6">
+                    <span class="question-title">Q7. Short Question: Solve the equation $x^2 - 5x + 6 = 0$. <span class="mark">[4]</span></span>
+                    <textarea class="w-full border p-3 rounded-lg h-24" placeholder="Input steps..."></textarea>
+                    <div class="sample-answer hidden">
+                        <strong>Sample Answer:</strong> Factoring: $(x-2)(x-3) = 0$. Therefore, $x = 2$ or $x = 3$.
+                    </div>
+                </div>
+
+                <div class="mb-6">
+                    <span class="question-title">Q8. Long Question: The product of two consecutive positive integers is 156. Find the integers by setting up a quadratic equation. <span class="mark">[8]</span></span>
+                    <textarea class="w-full border p-3 rounded-lg h-32" placeholder="Input steps..."></textarea>
+                    <div class="sample-answer hidden">
+                        <strong>Sample Answer:</strong> Let $x$ and $x+1$ be the integers. $x(x+1) = 156 \Rightarrow x^2 + x - 156 = 0$. Using quadratic formula or factoring: $(x+13)(x-12) = 0$. Since they are positive, $x = 12$. The integers are 12 and 13.
+                    </div>
+                </div>
+            </section>
+
+            <!-- 3. Chemistry -->
+            <section class="subject-card">
+                <h2 class="text-xl font-bold text-blue-700 mb-4 border-b pb-2">3. Chemistry - 16分</h2>
+                <div class="mb-6">
+                    <span class="question-title">Q9. Which of the following elements has the electronic arrangement 2, 8, 2? <span class="mark">[2]</span></span>
+                    <div class="space-y-2">
+                        <label class="option-label"><input type="radio" name="mc-q5" value="A"> <span>A. Neon</span></label>
+                        <label class="option-label"><input type="radio" name="mc-q5" value="B"> <span>B. Magnesium</span></label>
+                        <label class="option-label"><input type="radio" name="mc-q5" value="C"> <span>C. Calcium</span></label>
+                        <label class="option-label"><input type="radio" name="mc-q5" value="D"> <span>D. Aluminum</span></label>
+                    </div>
+                </div>
+                <div class="mb-6">
+                    <span class="question-title">Q10. Why do ionic compounds have high melting points? <span class="mark">[2]</span></span>
+                    <div class="space-y-2">
+                        <label class="option-label"><input type="radio" name="mc-q6" value="A"> <span>A. Strong electrostatic forces between oppositely charged ions</span></label>
+                        <label class="option-label"><input type="radio" name="mc-q6" value="B"> <span>B. Strong covalent bonds between atoms</span></label>
+                        <label class="option-label"><input type="radio" name="mc-q6" value="C"> <span>C. Weak intermolecular forces</span></label>
+                        <label class="option-label"><input type="radio" name="mc-q6" value="D"> <span>D. Giant metallic lattice structure</span></label>
+                    </div>
+                </div>
+                <div class="mb-6">
+                    <span class="question-title">Q11. Short Question: Draw the electron diagram (dot-and-cross) for Sodium Chloride. <span class="mark">[4]</span></span>
+                    <div class="border p-4 bg-slate-100 rounded text-center italic text-slate-500">Describe the transfer of electrons in text if drawing is not possible.</div>
+                    <div class="sample-answer hidden">
+                        <strong>Sample Answer:</strong> Na loses 1 electron to become $Na^+ [2,8]$. Cl gains 1 electron to become $Cl^- [2,8,8]$. Shown as $[Na]^+$ and $[Cl \text{ with 8 dots}]^-$.
+                    </div>
+                </div>
+                <div class="mb-6">
+                    <span class="question-title">Q12. Long Question: Explain why Magnesium is more reactive than Copper based on their reactions with dilute acids. <span class="mark">[8]</span></span>
+                    <textarea class="w-full border p-3 rounded-lg h-32"></textarea>
+                    <div class="sample-answer hidden">
+                        <strong>Sample Answer:</strong> Mg reacts vigorously with dilute HCl to produce Hydrogen gas (bubbles). Cu does not react with dilute HCl. This shows Mg has a higher tendency to lose electrons and form ions than Cu.
+                    </div>
+                </div>
+            </section>
+
+            <!-- 4. English Language -->
+            <section class="subject-card">
+                <h2 class="text-xl font-bold text-blue-700 mb-4 border-b pb-2">4. English Language - 16分</h2>
+                <div class="mb-6">
+                    <span class="question-title">Q13. Choose the correct tense: "By the time we ______, the movie had already started." <span class="mark">[2]</span></span>
+                    <div class="space-y-2">
+                        <label class="option-label"><input type="radio" name="mc-q7" value="A"> <span>A. arrive</span></label>
+                        <label class="option-label"><input type="radio" name="mc-q7" value="B"> <span>B. arrived</span></label>
+                        <label class="option-label"><input type="radio" name="mc-q7" value="C"> <span>C. had arrived</span></label>
+                        <label class="option-label"><input type="radio" name="mc-q7" value="D"> <span>D. were arriving</span></label>
+                    </div>
+                </div>
+                <div class="mb-6">
+                    <span class="question-title">Q14. In a formal letter, which of the following is a proper sign-off if you started with "Dear Sir/Madam"? <span class="mark">[2]</span></span>
+                    <div class="space-y-2">
+                        <label class="option-label"><input type="radio" name="mc-q8" value="A"> <span>A. Yours sincerely</span></label>
+                        <label class="option-label"><input type="radio" name="mc-q8" value="B"> <span>B. Best regards</span></label>
+                        <label class="option-label"><input type="radio" name="mc-q8" value="C"> <span>C. Yours faithfully</span></label>
+                        <label class="option-label"><input type="radio" name="mc-q8" value="D"> <span>D. Cheers</span></label>
+                    </div>
+                </div>
+                <div class="mb-6">
+                    <span class="question-title">Q15. Short Question: Rewrite the sentence using the Passive Voice: "The chef prepared a delicious meal." <span class="mark">[4]</span></span>
+                    <textarea class="w-full border p-3 rounded-lg h-16"></textarea>
+                    <div class="sample-answer hidden">
+                        <strong>Sample Answer:</strong> A delicious meal was prepared by the chef.
+                    </div>
+                </div>
+                <div class="mb-6">
+                    <span class="question-title">Q16. Long Question: Write a short paragraph (50 words) to persuade your school to ban plastic bottles. <span class="mark">[8]</span></span>
+                    <textarea class="w-full border p-3 rounded-lg h-32"></textarea>
+                    <div class="sample-answer hidden">
+                        <strong>Sample Answer:</strong> Banning plastic bottles is vital for protecting our environment. Every year, millions of bottles end up in oceans, harming marine life. By switching to reusable containers, our school can lead the way in sustainability and reduce our carbon footprint significantly. Let’s act now for a greener future!
+                    </div>
+                </div>
+            </section>
+
+            <!-- 5. Geography -->
+            <section class="subject-card">
+                <h2 class="text-xl font-bold text-blue-700 mb-4 border-b pb-2">5. Geography - 16分</h2>
+                <div class="mb-6">
+                    <span class="question-title">Q17. Which of the following is an example of a Divergent Plate Boundary? <span class="mark">[2]</span></span>
+                    <div class="space-y-2">
+                        <label class="option-label"><input type="radio" name="mc-q9" value="A"> <span>A. San Andreas Fault</span></label>
+                        <label class="option-label"><input type="radio" name="mc-q9" value="B"> <span>B. Mid-Atlantic Ridge</span></label>
+                        <label class="option-label"><input type="radio" name="mc-q9" value="C"> <span>C. Himalayan Mountains</span></label>
+                        <label class="option-label"><input type="radio" name="mc-q9" value="D"> <span>D. Japan Trench</span></label>
+                    </div>
+                </div>
+                <div class="mb-6">
+                    <span class="question-title">Q18. On a map with a scale of 1:50,000, what does 2cm represent in reality? <span class="mark">[2]</span></span>
+                    <div class="space-y-2">
+                        <label class="option-label"><input type="radio" name="mc-q10" value="A"> <span>A. 100m</span></label>
+                        <label class="option-label"><input type="radio" name="mc-q10" value="B"> <span>B. 500m</span></label>
+                        <label class="option-label"><input type="radio" name="mc-q10" value="C"> <span>C. 1000m (1km)</span></label>
+                        <label class="option-label"><input type="radio" name="mc-q10" value="D"> <span>D. 5km</span></label>
+                    </div>
+                </div>
+                <div class="mb-6">
+                    <span class="question-title">Q19. Short Question: Briefly explain how a "Tsunami" is formed. <span class="mark">[4]</span></span>
+                    <textarea class="w-full border p-3 rounded-lg h-24"></textarea>
+                    <div class="sample-answer hidden">
+                        <strong>Sample Answer:</strong> It is usually caused by an underwater earthquake at a destructive plate boundary. The sudden vertical displacement of the seabed displaces a huge volume of water, creating powerful waves.
+                    </div>
+                </div>
+                <div class="mb-6">
+                    <span class="question-title">Q20. Long Question: Evaluate the effectiveness of "Earthquake-proof buildings" in LEDCs (Less Economically Developed Countries). <span class="mark">[8]</span></span>
+                    <textarea class="w-full border p-3 rounded-lg h-32"></textarea>
+                    <div class="sample-answer hidden">
+                        <strong>Sample Answer:</strong> While effective, these technologies are expensive. In LEDCs, high costs and lack of skilled labor make wide adoption difficult. Governments often prioritize basic needs over retrofitting, leading to higher casualties during seismic events compared to MEDCs.
+                    </div>
+                </div>
+            </section>
+
+            <!-- 6. 公社科 -->
+            <section class="subject-card">
+                <h2 class="text-xl font-bold text-blue-700 mb-4 border-b pb-2">6. 公民與社會發展科 (CSD) - 20分</h2>
+                <div class="mb-6">
+                    <span class="question-title">Q21. 根據《基本法》，香港特別行政區的法律制度基礎是什麼？ <span class="mark">[2]</span></span>
+                    <div class="space-y-2">
+                        <label class="option-label"><input type="radio" name="mc-q11" value="A"> <span>A. 社會主義法律體系</span></label>
+                        <label class="option-label"><input type="radio" name="mc-q11" value="B"> <span>B. 內地法律制度</span></label>
+                        <label class="option-label"><input type="radio" name="mc-q11" value="C"> <span>C. 原有的普通法及平等法</span></label>
+                        <label class="option-label"><input type="radio" name="mc-q11" value="D"> <span>D. 國際公法</span></label>
+                    </div>
+                </div>
+                <div class="mb-6">
+                    <span class="question-title">Q22. 下列哪一項體現了國家對香港行使「全面管治權」？ <span class="mark">[2]</span></span>
+                    <div class="space-y-2">
+                        <label class="option-label"><input type="radio" name="mc-q12" value="A"> <span>A. 處理香港區議會選舉事務</span></label>
+                        <label class="option-label"><input type="radio" name="mc-q12" value="B"> <span>B. 委任行政長官及主要官員</span></label>
+                        <label class="option-label"><input type="radio" name="mc-q12" value="C"> <span>C. 制定香港中小學教學大綱</span></label>
+                        <label class="option-label"><input type="radio" name="mc-q12" value="D"> <span>D. 審批民間社團註冊</span></label>
+                    </div>
+                </div>
+                <div class="mb-6">
+                    <span class="question-title">Q23. 短問答：請簡述「一國兩制」中「一國」與「兩制」的關係。 <span class="mark">[6]</span></span>
+                    <textarea class="w-full border p-3 rounded-lg h-24"></textarea>
+                    <div class="sample-answer hidden">
+                        <strong>參考答案：</strong> 「一國」是「兩制」的前提和基礎。「兩制」從屬並派生於「一國」，並在「一國」之內共存。沒有「一國」，就沒有「兩制」。
+                    </div>
+                </div>
+                <div class="mb-6">
+                    <span class="question-title">Q24. 長題目：試探討《基本法》如何保障香港居民的權利與自由？請舉出兩個例子說明。 <span class="mark">[10]</span></span>
+                    <textarea class="w-full border p-3 rounded-lg h-32"></textarea>
+                    <div class="sample-answer hidden">
+                        <strong>參考答案：</strong> 1. 法律保障：基本法第三章詳細列明居民享有言論、新聞、出版、集會、結社等自由。 2. 司法保障：香港擁有獨立的司法權和終審權，確保居民受到公平審訊。例子：居民可對行政機關的行為提起訴訟（司法覆核）。
+                    </div>
+                </div>
+            </section>
+
+            <div class="text-center py-10">
+                <button type="button" onclick="submitExam()" class="bg-blue-700 hover:bg-blue-800 text-white font-bold py-4 px-12 rounded-full shadow-lg transform transition active:scale-95">
+                    提交考卷 (Submit Exam)
+                </button>
+            </div>
+        </form>
+
+        <footer class="text-center text-slate-400 text-sm border-t pt-8">
+            <p>&copy; 2026 S4 Exam Prep Tool. All rights reserved.</p>
+            <p class="mt-1">加油！每一份努力都會在未來開花結果。</p>
+        </footer>
+    </div>
 </body>
 </html>
