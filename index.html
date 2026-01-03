@@ -1,11 +1,198 @@
 <!DOCTYPE html>
 <html lang="zh-HK">
 <head>
- <meta charset="UTF-8">
- <title>我的 GitHub Pages 網站</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>媽媽萬用清單 - 忙碌中的一點甜</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap');
+        
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: #fdf6f0; /* 溫暖的米色背景 */
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .category-btn.active {
+            background-color: #6366f1;
+            color: white;
+            transform: scale(1.05);
+        }
+
+        .task-card {
+            transition: all 0.2s ease;
+        }
+
+        /* 針對手機單手操作優化的按鈕 */
+        .big-button {
+            min-height: 54px;
+        }
+    </style>
 </head>
-<body>
- <h1>你好！GitHub Pages 已經成功運作 🎉</h1>
- <p>呢度係我嘅第一個 GitHub Pages 頁面。</p>
+<body class="pb-10">
+
+    <!-- 頂部標題 -->
+    <header class="bg-white px-6 py-8 shadow-sm rounded-b-[40px] text-center mb-6">
+        <h1 class="text-2xl font-bold text-gray-800">辛苦喇，媽媽 ❤️</h1>
+        <p class="text-gray-500 text-sm mt-1">今日想處理邊樣嘢先？</p>
+    </header>
+
+    <main class="max-w-md mx-auto px-4">
+        
+        <!-- 輸入區域 -->
+        <div class="bg-white rounded-3xl p-6 shadow-md mb-8">
+            <div class="space-y-4">
+                <!-- 類別選擇 (大按鈕) -->
+                <div class="grid grid-cols-2 gap-3" id="category-group">
+                    <button onclick="selectCategory('🏠 家務')" class="category-btn bg-gray-100 py-3 rounded-2xl text-lg font-medium border-2 border-transparent">🏠 家務</button>
+                    <button onclick="selectCategory('🤝 輔導')" class="category-btn bg-gray-100 py-3 rounded-2xl text-lg font-medium border-2 border-transparent">🤝 輔導</button>
+                    <button onclick="selectCategory('🙏 靈修')" class="category-btn bg-gray-100 py-3 rounded-2xl text-lg font-medium border-2 border-transparent">🙏 靈修</button>
+                    <button onclick="selectCategory('☕ ME TIME')" class="category-btn bg-gray-100 py-3 rounded-2xl text-lg font-medium border-2 border-transparent">☕ ME TIME</button>
+                    <button onclick="selectCategory('⛪ 教會嘢')" class="category-btn bg-gray-100 py-3 rounded-2xl text-lg font-medium border-2 border-transparent">⛪ 教會嘢</button>
+                    <button onclick="selectCategory('🍳 煮飯')" class="category-btn bg-gray-100 py-3 rounded-2xl text-lg font-medium border-2 border-transparent">🍳 煮飯</button>
+                </div>
+
+                <!-- 時間與描述 -->
+                <div class="flex space-x-2">
+                    <input type="time" id="taskTime" class="w-1/3 p-4 bg-gray-50 rounded-2xl border-none text-lg focus:ring-2 focus:ring-indigo-200 outline-none">
+                    <input type="text" id="taskDesc" placeholder="仲有咩特別要記？" class="w-2/3 p-4 bg-gray-50 rounded-2xl border-none text-lg focus:ring-2 focus:ring-indigo-200 outline-none">
+                </div>
+
+                <!-- 新增按鈕 -->
+                <button onclick="addTask()" class="w-full big-button bg-indigo-500 hover:bg-indigo-600 text-white rounded-2xl text-xl font-bold shadow-lg shadow-indigo-100 transition-all active:scale-95">
+                    記低佢
+                </button>
+            </div>
+        </div>
+
+        <!-- 任務列表 -->
+        <div id="taskList" class="space-y-4">
+            <!-- 任務會在這裡出現 -->
+        </div>
+
+        <!-- 清空按鈕 -->
+        <div class="mt-10 text-center">
+            <button onclick="clearAll()" class="text-gray-400 text-sm underline">清空全部紀錄</button>
+        </div>
+    </main>
+
+    <script>
+        let selectedCategory = '';
+        let tasks = JSON.parse(localStorage.getItem('mama_tasks')) || [];
+
+        // 初始化
+        window.onload = () => {
+            renderTasks();
+            // 預設選中第一個類別
+            selectCategory('🏠 家務');
+        };
+
+        // 選擇類別
+        function selectCategory(cat) {
+            selectedCategory = cat;
+            const btns = document.querySelectorAll('.category-btn');
+            btns.forEach(btn => {
+                if (btn.innerText === cat) {
+                    btn.classList.add('active', 'border-indigo-500');
+                    btn.classList.remove('bg-gray-100');
+                } else {
+                    btn.classList.remove('active', 'border-indigo-500');
+                    btn.classList.add('bg-gray-100');
+                }
+            });
+        }
+
+        // 新增任務
+        function addTask() {
+            const time = document.getElementById('taskTime').value;
+            const desc = document.getElementById('taskDesc').value;
+
+            if (!selectedCategory) return showMsg('揀個類別先啦');
+
+            const newTask = {
+                id: Date.now(),
+                category: selectedCategory,
+                time: time || '--:--',
+                desc: desc || '冇備註',
+                done: false
+            };
+
+            tasks.unshift(newTask);
+            saveAndRender();
+            
+            // 重置輸入
+            document.getElementById('taskDesc').value = '';
+        }
+
+        // 存儲並渲染
+        function saveAndRender() {
+            localStorage.setItem('mama_tasks', JSON.stringify(tasks));
+            renderTasks();
+        }
+
+        // 渲染列表
+        function renderTasks() {
+            const list = document.getElementById('taskList');
+            list.innerHTML = '';
+
+            if (tasks.length === 0) {
+                list.innerHTML = `<div class="text-center py-10 text-gray-400">暫時冇嘢做，休息下先 ☕</div>`;
+                return;
+            }
+
+            tasks.forEach(task => {
+                const card = document.createElement('div');
+                card.className = `task-card bg-white p-5 rounded-3xl shadow-sm flex items-center justify-between ${task.done ? 'opacity-50' : ''}`;
+                card.innerHTML = `
+                    <div class="flex-1" onclick="toggleTask(${task.id})">
+                        <div class="flex items-center space-x-2">
+                            <span class="text-xs font-bold px-2 py-1 bg-indigo-50 text-indigo-600 rounded-lg">${task.category}</span>
+                            <span class="text-gray-400 text-sm">${task.time}</span>
+                        </div>
+                        <p class="text-lg font-medium mt-1 ${task.done ? 'line-through text-gray-400' : 'text-gray-800'}">${task.desc}</p>
+                    </div>
+                    <div class="flex space-x-2 ml-4">
+                        <button onclick="toggleTask(${task.id})" class="p-3 bg-green-50 text-green-600 rounded-full active:scale-90">
+                            ${task.done ? '↩️' : '✅'}
+                        </button>
+                        <button onclick="deleteTask(${task.id})" class="p-3 bg-red-50 text-red-400 rounded-full active:scale-90">
+                            🗑️
+                        </button>
+                    </div>
+                `;
+                list.appendChild(card);
+            });
+        }
+
+        function toggleTask(id) {
+            tasks = tasks.map(t => t.id === id ? {...t, done: !t.done} : t);
+            saveAndRender();
+        }
+
+        function deleteTask(id) {
+            tasks = tasks.filter(t => t.id !== id);
+            saveAndRender();
+        }
+
+        function clearAll() {
+            if (confirm('係咪真係要清空晒所有紀錄？')) {
+                tasks = [];
+                saveAndRender();
+            }
+        }
+
+        function showMsg(txt) {
+            // 代替 alert 的簡單提示
+            const header = document.querySelector('h1');
+            const original = header.innerText;
+            header.innerText = txt;
+            header.classList.add('text-red-500');
+            setTimeout(() => {
+                header.innerText = original;
+                header.classList.remove('text-red-500');
+            }, 2000);
+        }
+    </script>
 </body>
 </html>
