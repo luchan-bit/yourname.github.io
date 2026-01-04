@@ -3,373 +3,274 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>中四上學期六科全能模擬考卷 (Total: 100 Marks)</title>
+    <title>S4 1st Term Mock Exam & Study Guide</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.0/es5/tex-mml-chtml.js"></script>
-    <!-- Firebase Imports -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc, getDoc, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
-        // Global State
-        let db, auth, user, appId;
-        const examState = {
-            scores: {},
-            submitted: false
-        };
-
-        window.onload = async () => {
-            const firebaseConfig = JSON.parse(decodeURIComponent(document.body.dataset.fbConfig || "{}"));
-            appId = document.body.dataset.appId || "f4-exam-default";
-            
-            const app = initializeApp(firebaseConfig);
-            auth = getAuth(app);
-            db = getFirestore(app);
-
-            // Rule 3: Auth Before Queries
-            const initAuth = async () => {
-                const token = document.body.dataset.authToken;
-                if (token && token !== "undefined") {
-                    await signInWithCustomToken(auth, token);
-                } else {
-                    await signInAnonymously(auth);
-                }
-            };
-
-            await initAuth();
-            onAuthStateChanged(auth, (u) => {
-                user = u;
-                if (user) {
-                    loadHistory();
-                }
-            });
-        };
-
-        async function saveScore(score) {
-            if (!user) return;
-            const ref = doc(db, 'artifacts', appId, 'users', user.uid, 'exam_results', 'term1_final');
-            await setDoc(ref, {
-                score: score,
-                timestamp: new Date().toISOString(),
-                userId: user.uid
-            });
-            document.getElementById('save-status').innerText = "成績已成功存檔於雲端！";
-        }
-
-        async function loadHistory() {
-            if (!user) return;
-            const ref = doc(db, 'artifacts', appId, 'users', user.uid, 'exam_results', 'term1_final');
-            const snap = await getDoc(ref);
-            if (snap.exists()) {
-                document.getElementById('history').innerText = `上次記錄成績: ${snap.data().score}/100`;
-            }
-        }
-
-        window.submitExam = () => {
-            let total = 0;
-            // MC Scoring (24 Marks total, 2m each)
-            const mcAnswers = {
-                'mc-q1': 'B', 'mc-q2': 'D', // Chinese
-                'mc-q3': 'C', 'mc-q4': 'B', // Math
-                'mc-q5': 'B', 'mc-q6': 'A', // Chem
-                'mc-q7': 'B', 'mc-q8': 'C', // Eng
-                'mc-q9': 'B', 'mc-q10': 'C', // Geog
-                'mc-q11': 'C', 'mc-q12': 'B' // CSD
-            };
-
-            Object.keys(mcAnswers).forEach(id => {
-                const selected = document.querySelector(`input[name="${id}"]:checked`);
-                if (selected && selected.value === mcAnswers[id]) {
-                    total += 2;
-                }
-            });
-
-            // For Short/Long questions, we prompt user to self-grade based on sample answers
-            document.getElementById('results-section').classList.remove('hidden');
-            document.getElementById('exam-form').classList.add('opacity-50', 'pointer-events-none');
-            document.getElementById('final-score-display').innerText = `MC 得分: ${total} / 24`;
-            
-            // Show rationale/answers
-            document.querySelectorAll('.sample-answer').forEach(el => el.classList.remove('hidden'));
-            
-            saveScore(total);
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        };
-    </script>
     <style>
-        .subject-card { @apply bg-white p-6 rounded-xl shadow-sm border border-slate-100 mb-8; }
-        .question-title { @apply font-bold text-slate-800 mb-2 block; }
-        .option-label { @apply flex items-center space-x-3 p-3 rounded-lg border border-slate-200 cursor-pointer hover:bg-blue-50 transition; }
-        .sample-answer { @apply mt-4 p-4 bg-green-50 border-l-4 border-green-500 text-sm text-green-800; }
-        .mark { @apply text-red-500 font-medium; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .mark-pill { @apply bg-red-100 text-red-600 px-2 py-1 rounded text-xs font-bold; }
+        .syllabus-box { @apply bg-blue-50 border-l-4 border-blue-500 p-4 mb-6; }
+        .answer-box { @apply mt-4 p-4 bg-green-50 border border-green-200 rounded-lg hidden; }
+        .vocab-grid { @apply grid grid-cols-2 md:grid-cols-3 gap-2 text-sm; }
+        .vocab-item { @apply border p-1 rounded bg-white shadow-sm; }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-900 font-sans" 
-      data-fb-config='{"apiKey":"","authDomain":"","projectId":"","storageBucket":"","messagingSenderId":"","appId":""}'
-      data-app-id="f4_term1_mock_exam">
+<body class="bg-slate-100 text-slate-800 font-sans pb-20">
 
-    <div class="max-w-4xl mx-auto py-12 px-4">
-        <header class="text-center mb-12">
-            <h1 class="text-3xl font-extrabold text-slate-900 mb-2">中四級上學期全科模擬考卷</h1>
-            <p class="text-slate-500 italic">S4 1st Term Comprehensive Examination (2025/26)</p>
-            <div class="flex justify-center items-center space-x-4 mt-4">
-                <span class="bg-blue-600 text-white px-4 py-1 rounded-full text-sm">Time: 120 Minutes</span>
-                <span class="bg-red-600 text-white px-4 py-1 rounded-full text-sm">Full Marks: 100</span>
+    <!-- Navigation Bar -->
+    <nav class="bg-white shadow-md sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-4">
+            <div class="flex flex-wrap justify-between items-center py-4">
+                <div class="text-xl font-bold text-blue-800">S4 1st Term Exam Hub</div>
+                <div class="flex space-x-2 mt-2 md:mt-0 overflow-x-auto whitespace-nowrap pb-2">
+                    <button onclick="showTab('chinese')" class="px-4 py-2 rounded-lg bg-blue-100 hover:bg-blue-200 text-blue-800 font-medium">中文科</button>
+                    <button onclick="showTab('english')" class="px-4 py-2 rounded-lg bg-blue-100 hover:bg-blue-200 text-blue-800 font-medium">English</button>
+                    <button onclick="showTab('math')" class="px-4 py-2 rounded-lg bg-blue-100 hover:bg-blue-200 text-blue-800 font-medium">Math</button>
+                    <button onclick="showTab('chem')" class="px-4 py-2 rounded-lg bg-blue-100 hover:bg-blue-200 text-blue-800 font-medium">Chemistry</button>
+                    <button onclick="showTab('geog')" class="px-4 py-2 rounded-lg bg-blue-100 hover:bg-blue-200 text-blue-800 font-medium">Geography</button>
+                    <button onclick="showTab('csd')" class="px-4 py-2 rounded-lg bg-blue-100 hover:bg-blue-200 text-blue-800 font-medium">公社科</button>
+                </div>
             </div>
-            <p id="history" class="mt-4 text-sm font-medium text-slate-600"></p>
-        </header>
+        </div>
+    </nav>
 
-        <div id="results-section" class="hidden bg-blue-600 text-white p-6 rounded-xl mb-8 text-center animate-bounce">
-            <h2 class="text-2xl font-bold">考卷已提交！</h2>
-            <p id="final-score-display"></p>
-            <p class="text-xs mt-2">請對照下方的「參考答案」為你的短題目與長題目自評分數。</p>
-            <p id="save-status" class="font-bold mt-1 text-yellow-300"></p>
+    <div class="max-w-5xl mx-auto mt-8 px-4">
+        
+        <!-- Welcome Section -->
+        <div class="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-2xl p-8 text-white mb-8">
+            <h1 class="text-3xl font-bold">中四上學期模擬試題系統</h1>
+            <p class="mt-2 opacity-90">專為 2025/26 學年學生設計。請點選上方科目開始模擬練習。</p>
+            <div class="mt-4 flex items-center space-x-4">
+                <span class="text-sm bg-white/20 px-3 py-1 rounded-full">DSE 模式</span>
+                <span class="text-sm bg-white/20 px-3 py-1 rounded-full">答案解說</span>
+                <span class="text-sm bg-white/20 px-3 py-1 rounded-full">高頻詞彙</span>
+            </div>
         </div>
 
-        <form id="exam-form">
-
-            <!-- 1. 中文科 -->
-            <section class="subject-card">
-                <h2 class="text-xl font-bold text-blue-700 mb-4 border-b pb-2">1. 中文科 (Chinese Language) - 16分</h2>
-                
-                <div class="mb-6">
-                    <span class="question-title">Q1. 在《論仁、論孝、論君子》中，孔子認為「仁」的實踐應從何處開始？ <span class="mark">[2]</span></span>
-                    <div class="space-y-2">
-                        <label class="option-label"><input type="radio" name="mc-q1" value="A"> <span>A. 博學於文</span></label>
-                        <label class="option-label"><input type="radio" name="mc-q1" value="B"> <span>B. 孝悌</span></label>
-                        <label class="option-label"><input type="radio" name="mc-q1" value="C"> <span>C. 禮樂</span></label>
-                        <label class="option-label"><input type="radio" name="mc-q1" value="D"> <span>D. 忠恕</span></label>
-                    </div>
-                </div>
-
-                <div class="mb-6">
-                    <span class="question-title">Q2. 下列哪一項最符合「書信」的書寫規範？ <span class="mark">[2]</span></span>
-                    <div class="space-y-2">
-                        <label class="option-label"><input type="radio" name="mc-q2" value="A"> <span>A. 啟辭必須包含對收信人的讚美</span></label>
-                        <label class="option-label"><input type="radio" name="mc-q2" value="B"> <span>B. 結語必須在正文最後一段後換行頂格寫</span></label>
-                        <label class="option-label"><input type="radio" name="mc-q2" value="C"> <span>C. 簽署時必須只寫姓，不寫名</span></label>
-                        <label class="option-label"><input type="radio" name="mc-q2" value="D"> <span>D. 祝頌語應視乎收信人的身分而調整</span></label>
-                    </div>
-                </div>
-
-                <div class="mb-6">
-                    <span class="question-title">Q3. 短問答：孔子如何解釋「克己復禮為仁」？ <span class="mark">[4]</span></span>
-                    <textarea class="w-full border p-3 rounded-lg h-24" placeholder="請在此輸入答案..."></textarea>
-                    <div class="sample-answer hidden">
-                        <strong>參考答案：</strong> 意指約束自己的慾望，使言行舉止符合禮的規範。只要能做到這一點，天下的人都會歸許其仁德。具體實踐包括：非禮勿視、非禮勿聽、非禮勿言、非禮勿動。
-                    </div>
-                </div>
-
-                <div class="mb-6">
-                    <span class="question-title">Q4. 長題目：試說明在記敘文中，「藉事抒情」相比「直接抒情」有何優點？ <span class="mark">[8]</span></span>
-                    <textarea class="w-full border p-3 rounded-lg h-32" placeholder="請在此輸入答案..."></textarea>
-                    <div class="sample-answer hidden">
-                        <strong>參考答案：</strong> 1. 感染力更強：透過具體細節描寫，讓讀者感同身受，而非枯燥地說教。2. 情感含蓄真摯：情感寄託在事物或行為中，更加深刻。3. 避免空洞：有事實支撐的情感更具說服力。
-                    </div>
-                </div>
-            </section>
-
-            <!-- 2. Mathematics -->
-            <section class="subject-card">
-                <h2 class="text-xl font-bold text-blue-700 mb-4 border-b pb-2">2. Mathematics - 16分</h2>
-                
-                <div class="mb-6">
-                    <span class="question-title">Q5. For the quadratic equation $x^2 + 4x + 4 = 0$, what is the number of real roots? <span class="mark">[2]</span></span>
-                    <div class="space-y-2">
-                        <label class="option-label"><input type="radio" name="mc-q3" value="A"> <span>A. No real roots</span></label>
-                        <label class="option-label"><input type="radio" name="mc-q3" value="B"> <span>B. Two distinct real roots</span></label>
-                        <label class="option-label"><input type="radio" name="mc-q3" value="C"> <span>C. One equal real root</span></label>
-                        <label class="option-label"><input type="radio" name="mc-q3" value="D"> <span>D. Infinitely many</span></label>
-                    </div>
-                </div>
-
-                <div class="mb-6">
-                    <span class="question-title">Q6. Given $f(x) = x^2 - 4x + 7$. What is the coordinates of the vertex? <span class="mark">[2]</span></span>
-                    <div class="space-y-2">
-                        <label class="option-label"><input type="radio" name="mc-q4" value="A"> <span>A. $(4, 7)$</span></label>
-                        <label class="option-label"><input type="radio" name="mc-q4" value="B"> <span>B. $(2, 3)$</span></label>
-                        <label class="option-label"><input type="radio" name="mc-q4" value="C"> <span>C. $(-2, 3)$</span></label>
-                        <label class="option-label"><input type="radio" name="mc-q4" value="D"> <span>D. $(2, 7)$</span></label>
-                    </div>
-                </div>
-
-                <div class="mb-6">
-                    <span class="question-title">Q7. Short Question: Solve the equation $x^2 - 5x + 6 = 0$. <span class="mark">[4]</span></span>
-                    <textarea class="w-full border p-3 rounded-lg h-24" placeholder="Input steps..."></textarea>
-                    <div class="sample-answer hidden">
-                        <strong>Sample Answer:</strong> Factoring: $(x-2)(x-3) = 0$. Therefore, $x = 2$ or $x = 3$.
-                    </div>
-                </div>
-
-                <div class="mb-6">
-                    <span class="question-title">Q8. Long Question: The product of two consecutive positive integers is 156. Find the integers by setting up a quadratic equation. <span class="mark">[8]</span></span>
-                    <textarea class="w-full border p-3 rounded-lg h-32" placeholder="Input steps..."></textarea>
-                    <div class="sample-answer hidden">
-                        <strong>Sample Answer:</strong> Let $x$ and $x+1$ be the integers. $x(x+1) = 156 \Rightarrow x^2 + x - 156 = 0$. Using quadratic formula or factoring: $(x+13)(x-12) = 0$. Since they are positive, $x = 12$. The integers are 12 and 13.
-                    </div>
-                </div>
-            </section>
-
-            <!-- 3. Chemistry -->
-            <section class="subject-card">
-                <h2 class="text-xl font-bold text-blue-700 mb-4 border-b pb-2">3. Chemistry - 16分</h2>
-                <div class="mb-6">
-                    <span class="question-title">Q9. Which of the following elements has the electronic arrangement 2, 8, 2? <span class="mark">[2]</span></span>
-                    <div class="space-y-2">
-                        <label class="option-label"><input type="radio" name="mc-q5" value="A"> <span>A. Neon</span></label>
-                        <label class="option-label"><input type="radio" name="mc-q5" value="B"> <span>B. Magnesium</span></label>
-                        <label class="option-label"><input type="radio" name="mc-q5" value="C"> <span>C. Calcium</span></label>
-                        <label class="option-label"><input type="radio" name="mc-q5" value="D"> <span>D. Aluminum</span></label>
-                    </div>
-                </div>
-                <div class="mb-6">
-                    <span class="question-title">Q10. Why do ionic compounds have high melting points? <span class="mark">[2]</span></span>
-                    <div class="space-y-2">
-                        <label class="option-label"><input type="radio" name="mc-q6" value="A"> <span>A. Strong electrostatic forces between oppositely charged ions</span></label>
-                        <label class="option-label"><input type="radio" name="mc-q6" value="B"> <span>B. Strong covalent bonds between atoms</span></label>
-                        <label class="option-label"><input type="radio" name="mc-q6" value="C"> <span>C. Weak intermolecular forces</span></label>
-                        <label class="option-label"><input type="radio" name="mc-q6" value="D"> <span>D. Giant metallic lattice structure</span></label>
-                    </div>
-                </div>
-                <div class="mb-6">
-                    <span class="question-title">Q11. Short Question: Draw the electron diagram (dot-and-cross) for Sodium Chloride. <span class="mark">[4]</span></span>
-                    <div class="border p-4 bg-slate-100 rounded text-center italic text-slate-500">Describe the transfer of electrons in text if drawing is not possible.</div>
-                    <div class="sample-answer hidden">
-                        <strong>Sample Answer:</strong> Na loses 1 electron to become $Na^+ [2,8]$. Cl gains 1 electron to become $Cl^- [2,8,8]$. Shown as $[Na]^+$ and $[Cl \text{ with 8 dots}]^-$.
-                    </div>
-                </div>
-                <div class="mb-6">
-                    <span class="question-title">Q12. Long Question: Explain why Magnesium is more reactive than Copper based on their reactions with dilute acids. <span class="mark">[8]</span></span>
-                    <textarea class="w-full border p-3 rounded-lg h-32"></textarea>
-                    <div class="sample-answer hidden">
-                        <strong>Sample Answer:</strong> Mg reacts vigorously with dilute HCl to produce Hydrogen gas (bubbles). Cu does not react with dilute HCl. This shows Mg has a higher tendency to lose electrons and form ions than Cu.
-                    </div>
-                </div>
-            </section>
-
-            <!-- 4. English Language -->
-            <section class="subject-card">
-                <h2 class="text-xl font-bold text-blue-700 mb-4 border-b pb-2">4. English Language - 16分</h2>
-                <div class="mb-6">
-                    <span class="question-title">Q13. Choose the correct tense: "By the time we ______, the movie had already started." <span class="mark">[2]</span></span>
-                    <div class="space-y-2">
-                        <label class="option-label"><input type="radio" name="mc-q7" value="A"> <span>A. arrive</span></label>
-                        <label class="option-label"><input type="radio" name="mc-q7" value="B"> <span>B. arrived</span></label>
-                        <label class="option-label"><input type="radio" name="mc-q7" value="C"> <span>C. had arrived</span></label>
-                        <label class="option-label"><input type="radio" name="mc-q7" value="D"> <span>D. were arriving</span></label>
-                    </div>
-                </div>
-                <div class="mb-6">
-                    <span class="question-title">Q14. In a formal letter, which of the following is a proper sign-off if you started with "Dear Sir/Madam"? <span class="mark">[2]</span></span>
-                    <div class="space-y-2">
-                        <label class="option-label"><input type="radio" name="mc-q8" value="A"> <span>A. Yours sincerely</span></label>
-                        <label class="option-label"><input type="radio" name="mc-q8" value="B"> <span>B. Best regards</span></label>
-                        <label class="option-label"><input type="radio" name="mc-q8" value="C"> <span>C. Yours faithfully</span></label>
-                        <label class="option-label"><input type="radio" name="mc-q8" value="D"> <span>D. Cheers</span></label>
-                    </div>
-                </div>
-                <div class="mb-6">
-                    <span class="question-title">Q15. Short Question: Rewrite the sentence using the Passive Voice: "The chef prepared a delicious meal." <span class="mark">[4]</span></span>
-                    <textarea class="w-full border p-3 rounded-lg h-16"></textarea>
-                    <div class="sample-answer hidden">
-                        <strong>Sample Answer:</strong> A delicious meal was prepared by the chef.
-                    </div>
-                </div>
-                <div class="mb-6">
-                    <span class="question-title">Q16. Long Question: Write a short paragraph (50 words) to persuade your school to ban plastic bottles. <span class="mark">[8]</span></span>
-                    <textarea class="w-full border p-3 rounded-lg h-32"></textarea>
-                    <div class="sample-answer hidden">
-                        <strong>Sample Answer:</strong> Banning plastic bottles is vital for protecting our environment. Every year, millions of bottles end up in oceans, harming marine life. By switching to reusable containers, our school can lead the way in sustainability and reduce our carbon footprint significantly. Let’s act now for a greener future!
-                    </div>
-                </div>
-            </section>
-
-            <!-- 5. Geography -->
-            <section class="subject-card">
-                <h2 class="text-xl font-bold text-blue-700 mb-4 border-b pb-2">5. Geography - 16分</h2>
-                <div class="mb-6">
-                    <span class="question-title">Q17. Which of the following is an example of a Divergent Plate Boundary? <span class="mark">[2]</span></span>
-                    <div class="space-y-2">
-                        <label class="option-label"><input type="radio" name="mc-q9" value="A"> <span>A. San Andreas Fault</span></label>
-                        <label class="option-label"><input type="radio" name="mc-q9" value="B"> <span>B. Mid-Atlantic Ridge</span></label>
-                        <label class="option-label"><input type="radio" name="mc-q9" value="C"> <span>C. Himalayan Mountains</span></label>
-                        <label class="option-label"><input type="radio" name="mc-q9" value="D"> <span>D. Japan Trench</span></label>
-                    </div>
-                </div>
-                <div class="mb-6">
-                    <span class="question-title">Q18. On a map with a scale of 1:50,000, what does 2cm represent in reality? <span class="mark">[2]</span></span>
-                    <div class="space-y-2">
-                        <label class="option-label"><input type="radio" name="mc-q10" value="A"> <span>A. 100m</span></label>
-                        <label class="option-label"><input type="radio" name="mc-q10" value="B"> <span>B. 500m</span></label>
-                        <label class="option-label"><input type="radio" name="mc-q10" value="C"> <span>C. 1000m (1km)</span></label>
-                        <label class="option-label"><input type="radio" name="mc-q10" value="D"> <span>D. 5km</span></label>
-                    </div>
-                </div>
-                <div class="mb-6">
-                    <span class="question-title">Q19. Short Question: Briefly explain how a "Tsunami" is formed. <span class="mark">[4]</span></span>
-                    <textarea class="w-full border p-3 rounded-lg h-24"></textarea>
-                    <div class="sample-answer hidden">
-                        <strong>Sample Answer:</strong> It is usually caused by an underwater earthquake at a destructive plate boundary. The sudden vertical displacement of the seabed displaces a huge volume of water, creating powerful waves.
-                    </div>
-                </div>
-                <div class="mb-6">
-                    <span class="question-title">Q20. Long Question: Evaluate the effectiveness of "Earthquake-proof buildings" in LEDCs (Less Economically Developed Countries). <span class="mark">[8]</span></span>
-                    <textarea class="w-full border p-3 rounded-lg h-32"></textarea>
-                    <div class="sample-answer hidden">
-                        <strong>Sample Answer:</strong> While effective, these technologies are expensive. In LEDCs, high costs and lack of skilled labor make wide adoption difficult. Governments often prioritize basic needs over retrofitting, leading to higher casualties during seismic events compared to MEDCs.
-                    </div>
-                </div>
-            </section>
-
-            <!-- 6. 公社科 -->
-            <section class="subject-card">
-                <h2 class="text-xl font-bold text-blue-700 mb-4 border-b pb-2">6. 公民與社會發展科 (CSD) - 20分</h2>
-                <div class="mb-6">
-                    <span class="question-title">Q21. 根據《基本法》，香港特別行政區的法律制度基礎是什麼？ <span class="mark">[2]</span></span>
-                    <div class="space-y-2">
-                        <label class="option-label"><input type="radio" name="mc-q11" value="A"> <span>A. 社會主義法律體系</span></label>
-                        <label class="option-label"><input type="radio" name="mc-q11" value="B"> <span>B. 內地法律制度</span></label>
-                        <label class="option-label"><input type="radio" name="mc-q11" value="C"> <span>C. 原有的普通法及平等法</span></label>
-                        <label class="option-label"><input type="radio" name="mc-q11" value="D"> <span>D. 國際公法</span></label>
-                    </div>
-                </div>
-                <div class="mb-6">
-                    <span class="question-title">Q22. 下列哪一項體現了國家對香港行使「全面管治權」？ <span class="mark">[2]</span></span>
-                    <div class="space-y-2">
-                        <label class="option-label"><input type="radio" name="mc-q12" value="A"> <span>A. 處理香港區議會選舉事務</span></label>
-                        <label class="option-label"><input type="radio" name="mc-q12" value="B"> <span>B. 委任行政長官及主要官員</span></label>
-                        <label class="option-label"><input type="radio" name="mc-q12" value="C"> <span>C. 制定香港中小學教學大綱</span></label>
-                        <label class="option-label"><input type="radio" name="mc-q12" value="D"> <span>D. 審批民間社團註冊</span></label>
-                    </div>
-                </div>
-                <div class="mb-6">
-                    <span class="question-title">Q23. 短問答：請簡述「一國兩制」中「一國」與「兩制」的關係。 <span class="mark">[6]</span></span>
-                    <textarea class="w-full border p-3 rounded-lg h-24"></textarea>
-                    <div class="sample-answer hidden">
-                        <strong>參考答案：</strong> 「一國」是「兩制」的前提和基礎。「兩制」從屬並派生於「一國」，並在「一國」之內共存。沒有「一國」，就沒有「兩制」。
-                    </div>
-                </div>
-                <div class="mb-6">
-                    <span class="question-title">Q24. 長題目：試探討《基本法》如何保障香港居民的權利與自由？請舉出兩個例子說明。 <span class="mark">[10]</span></span>
-                    <textarea class="w-full border p-3 rounded-lg h-32"></textarea>
-                    <div class="sample-answer hidden">
-                        <strong>參考答案：</strong> 1. 法律保障：基本法第三章詳細列明居民享有言論、新聞、出版、集會、結社等自由。 2. 司法保障：香港擁有獨立的司法權和終審權，確保居民受到公平審訊。例子：居民可對行政機關的行為提起訴訟（司法覆核）。
-                    </div>
-                </div>
-            </section>
-
-            <div class="text-center py-10">
-                <button type="button" onclick="submitExam()" class="bg-blue-700 hover:bg-blue-800 text-white font-bold py-4 px-12 rounded-full shadow-lg transform transition active:scale-95">
-                    提交考卷 (Submit Exam)
-                </button>
+        <!-- 1. 中文科 -->
+        <div id="chinese" class="tab-content active">
+            <h2 class="text-2xl font-bold mb-4 border-b pb-2">中文科 (Chinese Language)</h2>
+            <div class="syllabus-box">
+                <h3 class="font-bold">考試範圍 (Syllabus):</h3>
+                <ul class="list-disc ml-5 text-sm">
+                    <li>文言指定篇章：《論仁、論孝、論君子》、《魚我所欲也》(節錄)</li>
+                    <li>記敘抒情文：藉事抒情、人稱切換、感官描寫</li>
+                    <li>實用文：書信 (個人/正式)、演講辭</li>
+                </ul>
             </div>
-        </form>
 
-        <footer class="text-center text-slate-400 text-sm border-t pt-8">
-            <p>&copy; 2026 S4 Exam Prep Tool. All rights reserved.</p>
-            <p class="mt-1">加油！每一份努力都會在未來開花結果。</p>
-        </footer>
+            <!-- Paper Structure -->
+            <div class="subject-card bg-white p-6 rounded-xl shadow-sm mb-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-bold">卷一：閱讀能力 (模擬)</h3>
+                    <span class="text-sm text-slate-500">時間：1小時30分鐘 | 滿分：50分</span>
+                </div>
+
+                <!-- MC Question -->
+                <div class="mb-8">
+                    <p class="font-medium">Q1. 根據《論仁、論孝、論君子》，孔子認為「仁者」面對貧困時會有什麼表現？ <span class="mark-pill">2M</span></p>
+                    <div class="mt-3 space-y-2">
+                        <p>A. 怨天尤人，設法擺脫</p>
+                        <p>B. 即使貧困，亦不離棄仁德</p>
+                        <p>C. 視若無睹，追求名利</p>
+                        <p>D. 感到羞恥，隱居避世</p>
+                        <button onclick="toggleAns('ans-cn-1')" class="text-blue-600 text-xs underline">查看答案</button>
+                        <div id="ans-cn-1" class="answer-box">
+                            <strong>答案：B。</strong> 理據：孔子云「仁者安仁」，強調仁德是君子在任何處境（包括貧困）都應堅持的原則。
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Short Question -->
+                <div class="mb-8">
+                    <p class="font-medium">Q2. 試解釋「克己復禮為仁」中「克己」的含義。 <span class="mark-pill">4M</span></p>
+                    <textarea class="w-full border mt-2 p-2 rounded"></textarea>
+                    <button onclick="toggleAns('ans-cn-2')" class="text-blue-600 text-xs underline mt-2">查看答案</button>
+                    <div id="ans-cn-2" class="answer-box">
+                        <strong>答案：</strong> 「克己」意指約束、克制自己的慾望。孔子強調要透過克制主觀私慾，使言行舉止回歸到「禮」的規範，這就是實踐仁德的方法。
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. English -->
+        <div id="english" class="tab-content">
+            <h2 class="text-2xl font-bold mb-4 border-b pb-2">English Language</h2>
+            <div class="syllabus-box">
+                <h3 class="font-bold">Exam Scope (Syllabus):</h3>
+                <ul class="list-disc ml-5 text-sm">
+                    <li>Reading: Inferencing skills, vocabulary in context.</li>
+                    <li>Writing: Formal emails/letters (Persuasive writing).</li>
+                    <li>Grammar: Perfect Tenses, Relative Clauses, Passive Voice.</li>
+                </ul>
+            </div>
+
+            <!-- Vocabulary Section (Referencing uploaded files) -->
+            <div class="bg-amber-50 p-4 border border-amber-200 rounded-lg mb-6">
+                <h3 class="font-bold text-amber-800 mb-2">Essential Vocabulary (From HKDSE 2022-24)</h3>
+                <div class="vocab-grid">
+                    <div class="vocab-item"><strong>Behemoth</strong>: 龐然大物</div>
+                    <div class="vocab-item"><strong>Saboteur</strong>: 破壞者</div>
+                    <div class="vocab-item"><strong>Ubiquitous</strong>: 普遍存在的</div>
+                    <div class="vocab-item"><strong>Ethical</strong>: 合乎道德的</div>
+                    <div class="vocab-item"><strong>In shreds</strong>: 支離破碎</div>
+                    <div class="vocab-item"><strong>Arboreal</strong>: 樹木的</div>
+                </div>
+            </div>
+
+            <div class="subject-card bg-white p-6 rounded-xl shadow-sm mb-6 border-t-4 border-blue-400">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-bold">Paper 1: Reading & Writing (Mock)</h3>
+                    <span class="text-sm text-slate-500">Time: 1.5 Hours | Total Marks: 60</span>
+                </div>
+
+                <!-- MC Question -->
+                <div class="mb-8">
+                    <p class="font-medium">Q1. Which word from the passage most likely means "to intentionally damage or destroy"? <span class="mark-pill">1M</span></p>
+                    <div class="mt-3 space-y-2">
+                        <p>A. Conserve</p>
+                        <p>B. Sabotage</p>
+                        <p>C. Elaborate</p>
+                        <p>D. Diminish</p>
+                        <button onclick="toggleAns('ans-en-1')" class="text-blue-600 text-xs underline">Check Answer</button>
+                        <div id="ans-en-1" class="answer-box">
+                            <strong>Ans: B.</strong> Rationale: Based on the 2022 vocab list, "sabotage/saboteur" relates to destruction.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Writing Question -->
+                <div class="mb-8">
+                    <p class="font-medium">Q2. Writing Task: Formal Email <span class="mark-pill">20M</span></p>
+                    <p class="text-sm text-slate-600 italic">"Write an email to the Highways Department expressing your concerns about the removal of ancient banyan trees in your district. Suggest ways to strike a balance between public safety and conservation." (Approx 200 words)</p>
+                    <div class="sample-answer mt-4 p-4 bg-slate-50 border rounded text-sm italic">
+                        <strong>Key Terms to Use:</strong> Safety grounds, iconic, conservation, public interest.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. Math -->
+        <div id="math" class="tab-content">
+            <h2 class="text-2xl font-bold mb-4 border-b pb-2 text-blue-800">Mathematics</h2>
+            <div class="syllabus-box bg-slate-50">
+                <h3 class="font-bold">Exam Scope:</h3>
+                <ul class="list-disc ml-5 text-sm">
+                    <li>Number Systems (Complex Numbers)</li>
+                    <li>Quadratic Equations (Discriminant, Sum/Product of Roots)</li>
+                    <li>Functions and Graphs (Transformation)</li>
+                </ul>
+            </div>
+
+            <div class="subject-card bg-white p-6 rounded-xl shadow-sm mb-6 border-t-4 border-indigo-400">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-bold text-indigo-700">Paper 1 (Section A)</h3>
+                    <span class="text-sm text-slate-500">Time: 1.25 Hours | Total: 45 Marks</span>
+                </div>
+
+                <div class="mb-8">
+                    <p class="font-medium">Q1. If the quadratic equation $x^2 - (k+1)x + 9 = 0$ has equal real roots, find the value(s) of $k$. <span class="mark-pill">4M</span></p>
+                    <div id="ans-math-1" class="answer-box">
+                        <strong>Solution:</strong> For equal real roots, $\Delta = 0$. <br>
+                        $b^2 - 4ac = [-(k+1)]^2 - 4(1)(9) = 0$ <br>
+                        $(k+1)^2 - 36 = 0 \Rightarrow (k+1)^2 = 36$ <br>
+                        $k+1 = 6$ or $k+1 = -6$. <br>
+                        <strong>$k = 5$ or $k = -7$.</strong>
+                    </div>
+                    <button onclick="toggleAns('ans-math-1')" class="text-blue-600 text-xs underline mt-2">Check Solution</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. Chem -->
+        <div id="chem" class="tab-content">
+            <h2 class="text-2xl font-bold mb-4 border-b pb-2 text-green-800">Chemistry</h2>
+            <div class="syllabus-box">
+                <h3 class="font-bold text-green-900">Syllabus:</h3>
+                <ul class="list-disc ml-5 text-sm">
+                    <li>Planet Earth (Microscopic World I): Bonding, Atomic Structure.</li>
+                    <li>Metals: Reactivity, Extraction, Corrosion.</li>
+                </ul>
+            </div>
+            
+            <div class="bg-white p-6 rounded-xl shadow-md">
+                <p class="font-bold">Q1. Explain why graphite can conduct electricity but diamond cannot, even though both are made of carbon. <span class="mark-pill">4M</span></p>
+                <div id="ans-chem-1" class="answer-box">
+                    <strong>Answer:</strong> 1. In graphite, each carbon atom is covalently bonded to only 3 others, leaving one <strong>delocalized electron</strong> per atom that can carry charge. 2. In diamond, each carbon atom is bonded to 4 others in a rigid tetrahedral structure; all valence electrons are involved in bonding, so no free electrons exist.
+                </div>
+                <button onclick="toggleAns('ans-chem-1')" class="text-blue-600 text-xs underline mt-2">Show Mark Scheme</button>
+            </div>
+        </div>
+
+        <!-- 5. Geography -->
+        <div id="geog" class="tab-content">
+            <h2 class="text-2xl font-bold mb-4 border-b pb-2 text-rose-800">Geography</h2>
+            <div class="syllabus-box bg-rose-50 border-rose-500">
+                <h3 class="font-bold">Syllabus:</h3>
+                <ul class="list-disc ml-5 text-sm">
+                    <li>Opportunities and Risks: Plate Tectonics, Earthquakes, Volcanoes.</li>
+                    <li>Map Skills: Grid references, gradients, cross-sections.</li>
+                </ul>
+            </div>
+
+            <div class="bg-white p-6 rounded-xl shadow-md mb-6">
+                <p class="font-bold">Q1. Discuss how plate boundaries contribute to the formation of tsunamis. <span class="mark-pill">6M</span></p>
+                <div id="ans-geog-1" class="answer-box">
+                    <strong>Answer:</strong> Tsunamis are primarily formed at <strong>convergent (destructive)</strong> plate boundaries. When an oceanic plate subducts under a continental plate, stress builds up. A sudden release of energy (earthquake) causes vertical displacement of the seabed, which displaces a massive volume of water, creating powerful waves.
+                </div>
+                <button onclick="toggleAns('ans-geog-1')" class="text-blue-600 text-xs underline mt-2">View Explanation</button>
+            </div>
+        </div>
+
+        <!-- 6. 公社科 -->
+        <div id="csd" class="tab-content">
+            <h2 class="text-2xl font-bold mb-4 border-b pb-2 text-indigo-800">公民與社會發展科 (CSD)</h2>
+            <div class="syllabus-box bg-indigo-50 border-indigo-500 text-sm">
+                <h3 class="font-bold text-indigo-900">考試範圍：</h3>
+                <ul class="list-disc ml-5">
+                    <li>「一國兩制」下的香港：憲制基礎（憲法與基本法）</li>
+                    <li>國民身份認同：國家標誌、國民義務、文化承傳</li>
+                </ul>
+            </div>
+
+            <div class="bg-white p-6 rounded-xl shadow-md">
+                <p class="font-bold">Q1. 下列哪一項正確描述了《基本法》與《憲法》的關係？ <span class="mark-pill">2M</span></p>
+                <div class="mt-3 space-y-2">
+                    <p>A. 《基本法》具有高於《憲法》的法律效力</p>
+                    <p>B. 《憲法》是《基本法》的立法依據與效力來源</p>
+                    <p>C. 《基本法》可以修改《憲法》的條文</p>
+                    <p>D. 兩者在香港的應用範圍完全相同</p>
+                </div>
+                <div id="ans-csd-1" class="answer-box">
+                    <strong>答案：B。</strong> 理據：《憲法》是國家的根本大法，具備最高的法律地位。根據《憲法》第 31 條，國家才有權設立特別行政區並透過全國人大制定《基本法》。
+                </div>
+                <button onclick="toggleAns('ans-csd-1')" class="text-blue-600 text-xs underline mt-2">查看答案</button>
+            </div>
+        </div>
+
     </div>
+
+    <!-- Floating Record Button -->
+    <div class="fixed bottom-6 right-6">
+        <button onclick="alert('建議：請將答錯的題目記錄在錯題本中。加油！')" class="bg-blue-600 text-white p-4 rounded-full shadow-2xl hover:bg-blue-700">
+            📝 學習記錄
+        </button>
+    </div>
+
+    <script>
+        function showTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.getElementById(tabId).classList.add('active');
+            window.scrollTo(0, 0);
+        }
+
+        function toggleAns(id) {
+            const el = document.getElementById(id);
+            el.style.display = (el.style.display === 'block') ? 'none' : 'block';
+        }
+    </script>
 </body>
 </html>
