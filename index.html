@@ -1,398 +1,144 @@
+Gemini
+
+DSE 中文科考試模擬分析
+我的內容
+身心靈復康計劃
+媽媽萬用清單
+DSE 中文科考試模擬分析
+香港中四考試重點與結構
+HTML 模板建立與優化
+Geography Exam Paper: Rivers and Coasts
+個人專業簡介模板製作
+AI 提示詞優化與事實查核
+提示詞優化與事實查核流程
+與 Gemini 對話
+[角色任務]：你是一位專精於香港中學文憑考試（HKDSE）課程的資深教育顧問。[背景資訊]：使用者為香港中四學生，正準備上學期期中/期末考試，需要了解核心科目及選修科的考卷結構與典型題目。[具體指令]：1. 附上範圍, 使用及分析中文科的中四上學期常見考點。2. 列出考卷問題及結構（如卷一、卷二.....等如DSE模擬格式及考核）。3. 提供DSE典型的模擬題目範例。[約束條件]：使用繁體中文，可寫及語音作答, 你需提供答案及語氣專業且鼓勵，內容需符合 2025/26 學年的最新課程指引，嚴禁虛構課程內容。4.全卷100分. 5. in html
+
+你好！我是你的 AI 教育顧問。針對你提供的國際基督教育優質音樂中學暨小學 2025-2026 年度十年級（中四）中國語文科上學期考試範圍，我已為你完成提示詞優化並進行深度分析。
+
+以下是針對你這份範圍所規劃的 DSE 模擬考核結構、重點分析及典型題目示範。
+
+第一步：專家優化（提示詞轉化）
+[角色任務]：你是一位深耕香港 DSE 中文科課程、精通考評局（HKEAA）評分準則的資深學科顧問。 [背景資訊]：針對一名就讀中四（十年級）的學生，依據其提供的 2025-2026 學年上學期考試範圍表（涵蓋《論君子》、《勸學》、《論孝》及《六國論》等篇章），制定考卷模擬方案。 [具體指令]：
+
+依照提供範圍，拆解卷一（閱讀）與卷二（寫作）的結構。
+
+針對「指定文言篇章」與「實用寫作」產出符合 DSE 趨勢的模擬題目。
+
+提供標準答案大綱、解析及應考策略。 [約束條件]：使用繁體中文，HTML 格式呈現，語氣專業且具鼓勵性。內容須嚴格遵守 2025/26 學年課程邏輯，總分設定為 100 分。
+
+第二步：直接答覆（模擬考卷分析與示範）
+HTML
 <!DOCTYPE html>
-<html lang="zh-HK">
+<html lang="zh-Hant">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>S4 1st Term Full Mock Exam (Comprehensive 100 Marks)</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.0/es5/tex-mml-chtml.js"></script>
-    <style>
-        .tab-content { display: none; }
-        .tab-content.active { display: block; }
-        .mark-pill { @apply bg-red-100 text-red-600 px-2 py-1 rounded text-xs font-bold inline-block; }
-        .syllabus-box { @apply bg-blue-50 border-l-4 border-blue-500 p-4 mb-6 shadow-sm; }
-        .answer-box { @apply mt-4 p-4 bg-green-50 border border-green-200 rounded-lg hidden text-sm leading-relaxed; }
-        .vocab-grid { @apply grid grid-cols-2 md:grid-cols-4 gap-2 text-xs; }
-        .vocab-item { @apply border p-1 rounded bg-white shadow-sm hover:bg-yellow-50 transition; }
-        .subject-card { @apply bg-white p-6 rounded-xl shadow-md mb-8 border-t-8; }
-        .question-block { @apply mb-10 border-b pb-8 last:border-0; }
-        textarea, input[type="text"] { @apply w-full border border-slate-300 p-3 rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none mt-2; }
-    </style>
+<meta charset="UTF-8">
+<title>中四中文科上學期考試模擬結構與策略</title>
+<style>
+    body { font-family: "Microsoft JhengHei", sans-serif; line-height: 1.6; color: #333; }
+    h2 { color: #2c3e50; border-left: 5px solid #3498db; padding-left: 10px; }
+    h3 { color: #2980b9; margin-top: 20px; }
+    .highlight { background-color: #fcf8e3; padding: 10px; border: 1px solid #faebcc; border-radius: 4px; }
+    table { width: 100%; border-collapse: collapse; margin: 15px 0; }
+    th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
+    th { background-color: #f2f2f2; }
+    .tips { color: #e67e22; font-weight: bold; }
+    .exam-box { border: 2px solid #2c3e50; padding: 20px; margin: 20px 0; }
+</style>
 </head>
-<body class="bg-slate-100 text-slate-800 font-sans pb-20">
+<body>
 
-    <!-- Navigation -->
-    <nav class="bg-indigo-900 shadow-xl sticky top-0 z-50">
-        <div class="max-w-6xl mx-auto px-4">
-            <div class="flex flex-col md:flex-row justify-between items-center py-4">
-                <div class="text-xl font-bold text-white mb-2 md:mb-0">DSE S4 Study Hub</div>
-                <div class="flex space-x-2 overflow-x-auto w-full md:w-auto no-scrollbar">
-                    <button onclick="showTab('chinese')" class="tab-btn px-4 py-2 rounded-lg bg-indigo-700 text-white hover:bg-indigo-600 transition">中文科</button>
-                    <button onclick="showTab('english')" class="tab-btn px-4 py-2 rounded-lg bg-indigo-700 text-white hover:bg-indigo-600 transition">English</button>
-                    <button onclick="showTab('math')" class="tab-btn px-4 py-2 rounded-lg bg-indigo-700 text-white hover:bg-indigo-600 transition">Math</button>
-                    <button onclick="showTab('chem')" class="tab-btn px-4 py-2 rounded-lg bg-indigo-700 text-white hover:bg-indigo-600 transition">Chemistry</button>
-                    <button onclick="showTab('geog')" class="tab-btn px-4 py-2 rounded-lg bg-indigo-700 text-white hover:bg-indigo-600 transition">Geography</button>
-                    <button onclick="showTab('csd')" class="tab-btn px-4 py-2 rounded-lg bg-indigo-700 text-white hover:bg-indigo-600 transition">公社科</button>
-                </div>
-            </div>
-        </div>
-    </nav>
+    <p>你好！看到你的考試範圍，這是一份非常標準且具備 DSE 銜接難度的範圍。你目前的重點在於<strong>「文言基礎（字詞、語譯）」</strong>以及<strong>「實用文格式（書信、演講辭）」</strong>。以下我為你將考試內容轉化為 DSE 模擬格式：</p>
 
-    <div class="max-w-5xl mx-auto mt-8 px-4">
-        
-        <!-- Header Section -->
-        <div class="bg-white rounded-2xl p-8 shadow-lg mb-8 border-b-4 border-indigo-500 relative overflow-hidden">
-            <div class="relative z-10">
-                <h1 class="text-3xl font-black text-slate-900">中四級上學期全科模擬試題</h1>
-                <p class="mt-2 text-slate-600">整合 2022-2024 文憑試高頻詞彙及各科最新考核範圍。全卷總分：100分。</p>
-            </div>
-            <div class="absolute right-0 top-0 opacity-10 pointer-events-none">
-                <svg width="200" height="200" fill="currentColor" viewBox="0 0 20 20"><path d="M9 4.804A7.993 7.993 0 003 4c-1.1 0-2 .9-2 2v11c0 1.1.9 2 2 2 1.514 0 3.083.409 4.487 1.102a.5.5 0 00.513 0C8.417 19.41 9.986 19 11.5 19c1.514 0 3.083.409 4.487 1.102a.5.5 0 00.513 0C17.917 19.41 19.486 19 21 19c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2a7.993 7.993 0 00-6 2.804 7.993 7.993 0 00-6-2.804z"></path></svg>
-            </div>
-        </div>
+    <h2>一、 考卷結構與分數分佈 (全卷 100 分)</h2>
+    <table>
+        <tr>
+            <th>卷別</th>
+            <th>考核內容</th>
+            <th>分數</th>
+            <th>考核形式</th>
+        </tr>
+        <tr>
+            <td><strong>卷一：閱讀能力</strong></td>
+            <td>甲部：指定文言篇章 (30%)<br>乙部：課外閱讀理解 (70%)</td>
+            <td>50分 (加權後)</td>
+            <td>字詞解釋、句子語譯、問答題、比較題、修辭辨析。</td>
+        </tr>
+        <tr>
+            <td><strong>卷二：寫作能力</strong></td>
+            <td>甲部：實用寫作 (書信/演講辭)<br>乙部：命題寫作 (三選一)</td>
+            <td>50分 (加權後)</td>
+            <td>根據閱讀材料寫作實用文；650字以上長文寫作。</td>
+        </tr>
+    </table>
 
-        <!-- 1. 中文科 -->
-        <div id="chinese" class="tab-content active">
-            <div class="syllabus-box">
-                <h3 class="font-bold mb-1">中文科考試範圍:</h3>
-                <p class="text-xs text-blue-700 mb-2">建議作答時間：90 分鐘</p>
-                <ul class="list-disc ml-5 text-sm">
-                    <li><strong>範文</strong>：《論仁、論孝、論君子》、《魚我所欲也》</li>
-                    <li><strong>閱讀</strong>：段落大意、修辭（對比、襯托）、主旨提煉</li>
-                    <li><strong>寫作</strong>：記敘文「藉事抒情」；實用文「書信/演講辭」格式</li>
-                </ul>
-            </div>
+    <hr>
 
-            <div class="subject-card border-red-600">
-                <h2 class="text-xl font-bold mb-6 flex items-center"><span class="bg-red-600 text-white w-8 h-8 rounded-full flex items-center justify-center mr-2 text-sm">1</span> 閱讀與範文分析 (18分)</h2>
-                
-                <div class="question-block">
-                    <p class="font-bold">Q1. 根據《魚我所欲也》，以下哪一項最能反映孟子「捨生取義」的思想？ <span class="mark-pill">2分</span></p>
-                    <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
-                        <label class="border p-3 rounded-lg cursor-pointer hover:bg-red-50"><input type="radio" name="cn-q1" value="A"> A. 萬鐘則不辯禮義而受之</label>
-                        <label class="border p-3 rounded-lg cursor-pointer hover:bg-red-50"><input type="radio" name="cn-q1" value="B"> B. 所欲有甚於生者，所惡有甚於死者</label>
-                        <label class="border p-3 rounded-lg cursor-pointer hover:bg-red-50"><input type="radio" name="cn-q1" value="C"> C. 鄉為身死而不受，今為宮室之美為之</label>
-                        <label class="border p-3 rounded-lg cursor-pointer hover:bg-red-50"><input type="radio" name="cn-q1" value="D"> D. 賢者能勿喪耳</label>
-                    </div>
-                    <button onclick="toggleAns('ans-cn-1')" class="mt-3 text-red-600 text-xs font-bold uppercase tracking-widest">查看答案</button>
-                    <div id="ans-cn-1" class="answer-box">
-                        <strong>答案：B。</strong> <br>理據：孟子指出人心中有比生命更珍貴的東西（義），也有比死亡更厭惡的東西（不義），因此即使面對生死抉擇，亦能堅守道義。
-                    </div>
-                </div>
+    <h2>二、 卷一：甲部「指定文言篇章」典型題目示範</h2>
+    <p class="highlight">【範圍涵蓋】：論君子、勸學、論孝、六國論 (寫作手法)</p>
 
-                <div class="question-block">
-                    <p class="font-bold">Q2. 在《論君子》中，孔子說「君子坦蕩蕩，小人長戚戚」。試解釋「坦蕩蕩」在文中的含義，並說明其與君子修養的關係。 <span class="mark-pill">4分</span></p>
-                    <textarea placeholder="在此輸入答案..."></textarea>
-                    <button onclick="toggleAns('ans-cn-2')" class="mt-3 text-red-600 text-xs font-bold uppercase tracking-widest">查看答案</button>
-                    <div id="ans-cn-2" class="answer-box">
-                        <strong>參考答案：</strong> <br>「坦蕩蕩」意指心胸平坦寬廣。君子行為合乎正道，問心無愧，因此心情平靜舒暢；相反，小人心中充滿私慾與算計，經常憂心忡忡（長戚戚）。這反映了君子內在修養帶來的精神境界。
-                    </div>
-                </div>
+    <div class="exam-box">
+        <h3>Q1. 字詞解釋 (參考《論君子》、《勸學》)</h3>
+        <p>解釋下列句中標有▲號的字詞：</p>
+        <ul>
+            <li>(1) <strong>君子喻▲於義。</strong> (《論君子》) <br>答：【知曉 / 明白】</li>
+            <li>(2) <strong>假▲輿馬者，非利足也。</strong> (《勸學》) <br>答：【憑藉 / 藉助】</li>
+        </ul>
 
-                <div class="question-block">
-                    <p class="font-bold">Q3. 短文寫作：試以一個日常生活例子，說明如何體現「克己復禮」的精神。 <span class="mark-pill">12分</span></p>
-                    <textarea class="h-40" placeholder="請寫出約 150 字的短評..."></textarea>
-                    <div class="mt-4 p-4 bg-gray-50 rounded-lg text-xs text-slate-500 italic">
-                        <strong>寫作指引：</strong> 1. 先定義「克己復禮」（約束私慾，回歸禮法）；2. 舉出具體場景（如圖書館安靜、排隊禮讓）；3. 總結其對個人品格提升的意義。
-                    </div>
-                </div>
-            </div>
-        </div>
+        <h3>Q2. 句子語譯 (參考《論孝》)</h3>
+        <p>試將下列句子譯為白話文：<br><strong>「今之孝者，是謂能養。」</strong></p>
+        <p class="tips">【內部分析】：此題考核「養」字的讀音與意義區別（音 yàng，供養）。</p>
+        <p><strong>標準答案：</strong>現在所謂的孝子，只是說能夠供養父母。</p>
 
-        <!-- 2. English -->
-        <div id="english" class="tab-content">
-            <div class="syllabus-box bg-indigo-50 border-indigo-400">
-                <h3 class="font-bold mb-1 text-indigo-900">English Syllabus & Vocabulary Focus:</h3>
-                <p class="text-xs text-indigo-700 mb-2">Duration: 90 Minutes</p>
-                <div class="vocab-grid mb-4">
-                    <div class="vocab-item"><strong>Saboteur</strong> (2022)</div>
-                    <div class="vocab-item"><strong>Ethical Concerns</strong> (2022)</div>
-                    <div class="vocab-item"><strong>Extraordinary</strong> (2023)</div>
-                    <div class="vocab-item"><strong>Obstacle</strong> (2023)</div>
-                    <div class="vocab-item"><strong>Controversial</strong> (2024)</div>
-                    <div class="vocab-item"><strong>Unforeseen</strong> (2024)</div>
-                    <div class="vocab-item"><strong>Safety Grounds</strong> (2024)</div>
-                    <div class="vocab-item"><strong>In shreds</strong> (2022)</div>
-                </div>
-                <ul class="list-disc ml-5 text-sm text-indigo-900">
-                    <li>Reading: Identifying purpose, vocabulary substitution, inference.</li>
-                    <li>Writing: Formal Argumentative Article / Letter to the Editor.</li>
-                    <li>Grammar: Passive Voice, Relative Clauses, Tense Consistency.</li>
-                </ul>
-            </div>
-
-            <div class="subject-card border-indigo-600">
-                <h2 class="text-xl font-bold mb-6 flex items-center"><span class="bg-indigo-600 text-white w-8 h-8 rounded-full flex items-center justify-center mr-2 text-sm">2</span> Reading & Vocabulary (15 Marks)</h2>
-                
-                <div class="question-block">
-                    <p class="font-bold italic">"The Highways Department defended the axing of the century-old banyan tree on safety grounds, citing unforeseen circumstances that led to its sudden decay."</p>
-                    <p class="mt-4 font-bold">Q1. Which word from the text suggests that the situation was 'unexpected'? <span class="mark-pill">1M</span></p>
-                    <input type="text" placeholder="Your answer...">
-                    <button onclick="toggleAns('ans-en-1')" class="mt-3 text-indigo-600 text-xs font-bold uppercase tracking-widest">Check Answer</button>
-                    <div id="ans-en-1" class="answer-box">
-                        <strong>Ans: Unforeseen.</strong> (Based on the 2024 Paper 1 vocab list).
-                    </div>
-                </div>
-
-                <div class="question-block">
-                    <p class="font-bold">Q2. Complete the sentence using a word from the 2022 vocab list: "After the digital revolution, the traditional comic industry was left ______, struggling to compete with free online content." <span class="mark-pill">2M</span></p>
-                    <div class="mt-3 grid grid-cols-2 gap-2 text-sm">
-                        <label class="border p-2 rounded hover:bg-indigo-50"><input type="radio" name="en-q2" value="A"> A. in shreds</label>
-                        <label class="border p-2 rounded hover:bg-indigo-50"><input type="radio" name="en-q2" value="B"> B. extraordinary</label>
-                        <label class="border p-2 rounded hover:bg-indigo-50"><input type="radio" name="en-q2" value="C"> C. controversial</label>
-                        <label class="border p-2 rounded hover:bg-indigo-50"><input type="radio" name="en-q2" value="D"> D. ubiquitous</label>
-                    </div>
-                    <button onclick="toggleAns('ans-en-2')" class="mt-3 text-indigo-600 text-xs font-bold uppercase tracking-widest">Check Answer</button>
-                    <div id="ans-en-2" class="answer-box">
-                        <strong>Ans: A. in shreds.</strong> <br>Rationale: From 2022 Text 1, "in shreds" describes something in a state of ruin or brokenness.
-                    </div>
-                </div>
-
-                <div class="question-block">
-                    <h3 class="font-bold mb-2">Q3. Grammar & Writing Task (12 Marks)</h3>
-                    <p class="text-sm mb-2 font-medium">Topic: Artificial Intelligence in Education</p>
-                    <p class="text-xs text-slate-500 italic mb-4">Write a short paragraph debating whether AI is a 'saboteur' of creativity. Use at least 2 words from the vocabulary box above.</p>
-                    <textarea class="h-40" placeholder="Start writing here..."></textarea>
-                    <div class="sample-answer mt-4 p-4 bg-slate-50 rounded border text-xs leading-relaxed">
-                        <strong>Model Sample:</strong> While some argue that AI is a <strong>saboteur</strong> of original thought, others believe it presents <strong>extraordinary</strong> opportunities for learning. However, <strong>ethical concerns</strong> regarding bias must be addressed to ensure that student creativity is not <strong>in shreds</strong> due to over-reliance on algorithms.
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- 3. Math -->
-        <div id="math" class="tab-content">
-            <div class="syllabus-box bg-blue-50 border-blue-600">
-                <h3 class="font-bold mb-1">Mathematics Syllabus:</h3>
-                <p class="text-xs text-blue-700 mb-2">Duration: 75 Minutes</p>
-                <div class="grid grid-cols-2 gap-4 text-xs">
-                    <ul class="list-disc ml-5">
-                        <li>Complex Numbers ($i$, conjugate, equality)</li>
-                        <li>Quadratic Equations ($\Delta$, sum/product of roots)</li>
-                    </ul>
-                    <ul class="list-disc ml-5">
-                        <li>Graphs of Functions (Transformation)</li>
-                        <li>Trigonometry (Basic Identities, 2D)</li>
-                    </ul>
-                </div>
-            </div>
-
-            <div class="subject-card border-blue-500">
-                <h2 class="text-xl font-bold mb-6 flex items-center"><span class="bg-blue-600 text-white w-8 h-8 rounded-full flex items-center justify-center mr-2 text-sm">3</span> Section A (15 Marks)</h2>
-                
-                <div class="question-block">
-                    <p class="font-bold">Q1. If $k + (3-k)i = 5 - 2i$, where $k$ is a real number, find the value of $k$. <span class="mark-pill">3M</span></p>
-                    <div id="ans-math-1" class="answer-box">
-                        <strong>Solution:</strong> <br>
-                        By comparing the real parts: $k = 5$. <br>
-                        Check imaginary part: $3 - k = 3 - 5 = -2$, which matches. <br>
-                        <strong>Final Answer: $k = 5$.</strong>
-                    </div>
-                    <button onclick="toggleAns('ans-math-1')" class="mt-3 text-blue-600 text-xs font-bold uppercase tracking-widest">Check Solution</button>
-                </div>
-
-                <div class="question-block">
-                    <p class="font-bold">Q2. Given the quadratic equation $x^2 - 6x + (m-1) = 0$. If the equation has no real roots, find the range of values of $m$. <span class="mark-pill">4M</span></p>
-                    <div id="ans-math-2" class="answer-box">
-                        <strong>Solution:</strong> <br>
-                        For no real roots, $\Delta < 0$. <br>
-                        $\Delta = b^2 - 4ac = (-6)^2 - 4(1)(m-1) < 0$ <br>
-                        $36 - 4m + 4 < 0$ <br>
-                        $40 < 4m$ <br>
-                        <strong>Answer: $m > 10$.</strong>
-                    </div>
-                    <button onclick="toggleAns('ans-math-2')" class="mt-3 text-blue-600 text-xs font-bold uppercase tracking-widest">Check Solution</button>
-                </div>
-
-                <div class="question-block">
-                    <p class="font-bold">Q3. Long Question: Let $f(x) = x^2 - 4x + 7$. <br>
-                        (a) Express $f(x)$ in vertex form. <br>
-                        (b) Describe the transformation from $y = x^2$ to $y = f(x)$. <span class="mark-pill">8M</span></p>
-                    <div id="ans-math-3" class="answer-box">
-                        <strong>Solution:</strong> <br>
-                        (a) $f(x) = (x^2 - 4x + 4) - 4 + 7 = (x-2)^2 + 3$. <br>
-                        (b) Shift the graph of $y = x^2$ to the <strong>right by 2 units</strong> and then <strong>up by 3 units</strong>.
-                    </div>
-                    <button onclick="toggleAns('ans-math-3')" class="mt-3 text-blue-600 text-xs font-bold uppercase tracking-widest">Check Solution</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- 4. Chem -->
-        <div id="chem" class="tab-content">
-            <div class="syllabus-box bg-emerald-50 border-emerald-600">
-                <h3 class="font-bold mb-1 text-emerald-900">Chemistry Syllabus:</h3>
-                <p class="text-xs text-emerald-700 mb-2">Duration: 60 Minutes</p>
-                <ul class="list-disc ml-5 text-sm">
-                    <li>Microscopic World I: Atomic Structure, Isotopes, Ionic/Covalent Bonding.</li>
-                    <li>Metals: Reactivity Series, Extraction of Metals, Corrosion.</li>
-                </ul>
-            </div>
-
-            <div class="subject-card border-emerald-500">
-                <h2 class="text-xl font-bold mb-6 flex items-center"><span class="bg-emerald-600 text-white w-8 h-8 rounded-full flex items-center justify-center mr-2 text-sm">4</span> MCQ & Structured Questions (15 Marks)</h2>
-                
-                <div class="question-block">
-                    <p class="font-bold">Q1. Which of the following ions has the same electronic arrangement as a Neon atom? <span class="mark-pill">2M</span></p>
-                    <div class="mt-3 grid grid-cols-2 gap-2 text-sm">
-                        <label class="border p-2 rounded hover:bg-emerald-50"><input type="radio" name="ch-q1" value="A"> A. $Li^+$</label>
-                        <label class="border p-2 rounded hover:bg-emerald-50"><input type="radio" name="ch-q1" value="B"> B. $Mg^{2+}$</label>
-                        <label class="border p-2 rounded hover:bg-emerald-50"><input type="radio" name="ch-q1" value="C"> C. $Cl^-$</label>
-                        <label class="border p-2 rounded hover:bg-emerald-50"><input type="radio" name="ch-q1" value="D"> D. $Ca^{2+}$</label>
-                    </div>
-                    <button onclick="toggleAns('ans-ch-1')" class="mt-3 text-emerald-600 text-xs font-bold uppercase tracking-widest">Check Answer</button>
-                    <div id="ans-ch-1" class="answer-box">
-                        <strong>Ans: B.</strong> <br>Neon is (2, 8). Magnesium atom is (2, 8, 2); $Mg^{2+}$ loses 2 electrons to become (2, 8).
-                    </div>
-                </div>
-
-                <div class="question-block">
-                    <p class="font-bold">Q2. Displacement Reaction: When a piece of Zinc is added to Copper(II) Sulphate solution, what observations would you expect? Explain with an ionic equation. <span class="mark-pill">5M</span></p>
-                    <textarea placeholder="Observations and Equation..."></textarea>
-                    <button onclick="toggleAns('ans-ch-2')" class="mt-3 text-emerald-600 text-xs font-bold uppercase tracking-widest">Check Answer</button>
-                    <div id="ans-ch-2" class="answer-box">
-                        <strong>Answer:</strong> <br>
-                        <strong>Observations:</strong> The blue solution fades (becomes colorless), and a reddish-brown solid (copper) is deposited on the zinc surface. <br>
-                        <strong>Ionic Equation:</strong> $Zn(s) + Cu^{2+}(aq) \rightarrow Zn^{2+}(aq) + Cu(s)$. <br>
-                        <strong>Reason:</strong> Zinc is more reactive than copper and displaces it from the solution.
-                    </div>
-                </div>
-
-                <div class="question-block">
-                    <p class="font-bold">Q3. Corrosion: State two factors necessary for iron to rust, and explain how 'galvanization' prevents rusting even if the zinc coating is scratched. <span class="mark-pill">8M</span></p>
-                    <textarea class="h-32" placeholder="Your explanation..."></textarea>
-                    <div class="sample-answer mt-4 p-4 bg-slate-50 border rounded text-xs">
-                        <strong>Key Points:</strong> 1. Factors: Water and Oxygen. 2. Galvanization: Zinc is more reactive than iron. It acts as a <strong>sacrificial metal</strong>, losing electrons and corroding preferentially to protect the iron underneath.
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- 5. Geography -->
-        <div id="geog" class="tab-content">
-            <div class="syllabus-box bg-orange-50 border-orange-600">
-                <h3 class="font-bold mb-1 text-orange-900">Geography Syllabus:</h3>
-                <p class="text-xs text-orange-700 mb-2">Duration: 60 Minutes</p>
-                <ul class="list-disc ml-5 text-sm text-orange-900">
-                    <li>Opportunities and Risks: Internal structure, Plate Tectonics, Earthquakes, Volcanoes.</li>
-                    <li>Map Skills: Grid Reference, Scales, Gradient, Contour lines.</li>
-                </ul>
-            </div>
-
-            <div class="subject-card border-orange-500">
-                <h2 class="text-xl font-bold mb-6 flex items-center"><span class="bg-orange-600 text-white w-8 h-8 rounded-full flex items-center justify-center mr-2 text-sm">5</span> Tectonics & Map Skills (18 Marks)</h2>
-                
-                <div class="question-block">
-                    <p class="font-bold">Q1. At which type of plate boundary is new oceanic crust formed? <span class="mark-pill">2M</span></p>
-                    <div class="mt-3 grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
-                        <label class="border p-2 rounded hover:bg-orange-50"><input type="radio" name="ge-q1" value="A"> A. Convergent (Oceanic-Continental)</label>
-                        <label class="border p-2 rounded hover:bg-orange-50"><input type="radio" name="ge-q1" value="B"> B. Divergent (Oceanic)</label>
-                        <label class="border p-2 rounded hover:bg-orange-50"><input type="radio" name="ge-q1" value="C"> C. Transform Fault</label>
-                        <label class="border p-2 rounded hover:bg-orange-50"><input type="radio" name="ge-q1" value="D"> D. Collision zone</label>
-                    </div>
-                    <button onclick="toggleAns('ans-ge-1')" class="mt-3 text-orange-600 text-xs font-bold uppercase tracking-widest">Check Answer</button>
-                    <div id="ans-ge-1" class="answer-box">
-                        <strong>Ans: B. Divergent boundary.</strong> <br>Magma rises at mid-ocean ridges to form new crust.
-                    </div>
-                </div>
-
-                <div class="question-block">
-                    <p class="font-bold">Q2. Discuss why the San Francisco area is prone to frequent earthquakes. Refer to the type of plate boundary involved. <span class="mark-pill">6M</span></p>
-                    <textarea class="h-24"></textarea>
-                    <button onclick="toggleAns('ans-ge-2')" class="mt-3 text-orange-600 text-xs font-bold uppercase tracking-widest">Check Answer</button>
-                    <div id="ans-ge-2" class="answer-box">
-                        <strong>Answer:</strong> <br>San Francisco lies along the San Andreas Fault, which is a <strong>transform plate boundary</strong>. The Pacific Plate and the North American Plate slide past each other horizontally. Friction causes the plates to lock, and when the accumulated stress is suddenly released, a shallow-focus earthquake occurs.
-                    </div>
-                </div>
-
-                <div class="question-block">
-                    <p class="font-bold">Q3. Map Calculation: If the vertical distance between two points is 400m and the horizontal distance on a 1:20,000 map is 5cm, calculate the actual gradient. <span class="mark-pill">10M</span></p>
-                    <div id="ans-ge-3" class="answer-box">
-                        <strong>Solution:</strong> <br>
-                        1. Actual Horizontal Distance = $5 \text{ cm} \times 20,000 = 100,000 \text{ cm} = 1,000 \text{ m}$. <br>
-                        2. Gradient = $\frac{\text{Vertical Distance}}{\text{Horizontal Distance}} = \frac{400}{1000} = \mathbf{0.4}$ (or 1:2.5).
-                    </div>
-                    <button onclick="toggleAns('ans-ge-3')" class="mt-3 text-orange-600 text-xs font-bold uppercase tracking-widest">Check Answer</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- 6. 公社科 -->
-        <div id="csd" class="tab-content">
-            <div class="syllabus-box bg-cyan-50 border-cyan-600">
-                <h3 class="font-bold mb-1 text-cyan-900">公民與社會發展科考試範圍:</h3>
-                <p class="text-xs text-cyan-700 mb-2">建議作答時間：45 分鐘</p>
-                <ul class="list-disc ml-5 text-sm">
-                    <li><strong>核心內容</strong>：一國兩制的內涵、憲法與基本法的關係。</li>
-                    <li><strong>國民身份</strong>：國家象徵（國旗、國歌）、當代國情概要。</li>
-                </ul>
-            </div>
-
-            <div class="subject-card border-cyan-500">
-                <h2 class="text-xl font-bold mb-6 flex items-center"><span class="bg-cyan-600 text-white w-8 h-8 rounded-full flex items-center justify-center mr-2 text-sm">6</span> 資料回應與基礎知識 (18分)</h2>
-                
-                <div class="question-block">
-                    <p class="font-bold">Q1. 根據《基本法》，香港特別行政區擁有高度自治權，但下列哪項權力歸屬於中央人民政府？ <span class="mark-pill">2分</span></p>
-                    <div class="mt-3 space-y-2 text-sm">
-                        <label class="block border p-3 rounded-lg hover:bg-cyan-50"><input type="radio" name="cs-q1" value="A"> A. 貨幣發行權</label>
-                        <label class="block border p-3 rounded-lg hover:bg-cyan-50"><input type="radio" name="cs-q1" value="B"> B. 外交及國防事務</label>
-                        <label class="block border p-3 rounded-lg hover:bg-cyan-50"><input type="radio" name="cs-q1" value="C"> C. 終審權</label>
-                        <label class="block border p-3 rounded-lg hover:bg-cyan-50"><input type="radio" name="cs-q1" value="D"> D. 立法權</label>
-                    </div>
-                    <button onclick="toggleAns('ans-cs-1')" class="mt-3 text-cyan-600 text-xs font-bold uppercase tracking-widest">查看答案</button>
-                    <div id="ans-cs-1" class="answer-box">
-                        <strong>答案：B。</strong> <br>理據：根據《基本法》第十三條及第十四條，中央人民政府負責管理與香港特別行政區有關的外交事務及防務。
-                    </div>
-                </div>
-
-                <div class="question-block">
-                    <p class="font-bold">Q2. 試簡述《憲法》與《基本法》的關係。 <span class="mark-pill">6分</span></p>
-                    <textarea class="h-24"></textarea>
-                    <button onclick="toggleAns('ans-cs-2')" class="mt-3 text-cyan-600 text-xs font-bold uppercase tracking-widest">查看答案</button>
-                    <div id="ans-cs-2" class="answer-box">
-                        <strong>參考要點：</strong> <br>1. 《憲法》是國家的根本大法，具有最高法律地位；2. 《基本法》根據《憲法》制定，其法律效力來源於《憲法》；3. 《基本法》是落實「一國兩制」方針的法律保障，規定了香港特區實行的制度。
-                    </div>
-                </div>
-
-                <div class="question-block">
-                    <p class="font-bold">Q3. 資料分析：有人認為「國民身份認同」與「國際視野」可以並存，你是否同意？請舉例說明。 <span class="mark-pill">10分</span></p>
-                    <textarea class="h-40" placeholder="在此表達觀點..."></textarea>
-                    <div class="mt-4 p-4 bg-gray-50 rounded-lg text-xs italic">
-                        <strong>評分指引：</strong> 1. 表明立場；2. 解釋兩者不矛盾的原因（例如：認識國家歷史可與學習全球議題互補）；3. 舉例（如：參與國際志願服務、推廣中國文化到世界）。
-                    </div>
-                </div>
-            </div>
-        </div>
-
+        <h3>Q3. 比較題 / 分析題 (參考《六國論》)</h3>
+        <p>蘇洵在《六國論》中運用了什麼<strong>論證手法</strong>來指出賄秦的危害？試結合課文內容說明。</p>
+        <p><strong>答案要點：</strong>
+            <br>1. <strong>對比論證</strong>：以「祖先創業之難」對比「子孫割地之易」。
+            <br>2. <strong>比喻論證</strong>：以「抱薪救火」比喻以地事秦，地不盡則火不滅。
+        </p>
     </div>
 
-    <!-- Floating UI -->
-    <div class="fixed bottom-6 right-6 flex flex-col space-y-2">
-        <button onclick="alert('建議作答時間：建議每天練習一個科目，模擬考場氛圍！')" class="bg-indigo-600 text-white p-4 rounded-full shadow-2xl hover:bg-indigo-700 transition transform hover:scale-105">
-            💡 考試技巧
-        </button>
-        <button onclick="window.print()" class="bg-slate-800 text-white p-4 rounded-full shadow-2xl hover:bg-slate-900 transition transform hover:scale-105">
-            🖨️ 列印考卷
-        </button>
+    <hr>
+
+    <h2>三、 卷二：實用寫作與命題寫作預測</h2>
+
+    <h3>甲部：實用寫作 (預測：演講辭)</h3>
+    <p>範圍提到「書信」與「演講辭」。因中四初階常考校內情境，演講辭機率極高。</p>
+    <div class="highlight">
+        <strong>題目預設：</strong>試以學生會會長身分，擬一份在早會上的演講辭，向同學推廣「孝道文化周」。
+        <br><strong>必須注意：</strong>
+        <ul>
+            <li>格式：自稱、稱呼、問候語、結語（謝謝大家）。</li>
+            <li>語氣：誠懇、具號召力。</li>
+            <li>內容：需整合資料中的活動詳情、舉辦意義。</li>
+        </ul>
     </div>
 
-    <script>
-        function showTab(tabId) {
-            document.querySelectorAll('.tab-content').forEach(tab => {
-                tab.classList.remove('active');
-            });
-            document.getElementById(tabId).classList.add('active');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
+    <h3>乙部：命題寫作 (三選一)</h3>
+    <p>範圍強調「借事抒情」與「論證方法」。</p>
+    <ul>
+        <li><strong>記敘抒情類：</strong>「一次失敗的經歷，讓我明白了《勸學》中積累的道理。」(結合課文啟發)</li>
+        <li><strong>議論類：</strong>「有人認為現代社會不再需要『孝』，談談你的看法。」(考核論證手法：舉例、對比)</li>
+    </ul>
 
-        function toggleAns(id) {
-            const el = document.getElementById(id);
-            if (el.style.display === 'block') {
-                el.style.display = 'none';
-            } else {
-                el.style.display = 'block';
-            }
-        }
-    </script>
+    <hr>
+
+    <h2>四、 顧問應考建議</h2>
+    <ul>
+        <li><strong>【文言核心】：</strong>《論君子》與《論孝》的對比常考，建議背誦金句，這對卷二寫作也有極大幫助。</li>
+        <li><strong>【修辭辨析】：</strong>範圍提到的「比喻、對比、排比」，必須能從乙部課外白話文中準確找出並說明其「表達效果」。</li>
+        <li><strong>【內部事實查核】：</strong>根據 2025/26 課程，實用文不再純粹考格式，更看重「整合拓展」能力。請務必練習從閱讀材料中篩選重點。</li>
+    </ul>
+
+    <p style="text-align: center; font-weight: bold; color: #27ae60;">加油！這份範圍雖然紮實，但只要掌握了文言字詞的規律，卷一基本分就能穩拿！</p>
+
 </body>
 </html>
+下一步建議
+【資料充足，確認可執行】： 你是否需要我針對**《六國論》的寫作手法**（如對比、比喻）或是演講辭的標準範文格式提供更具體的拆解與寫作模板？
+
+
+
+
+Gemini 可能會出錯，請加以複查
+
