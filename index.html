@@ -1,288 +1,218 @@
-Gemini
-Gemini
+import React, { useState } from 'react';
+import { ChevronRight, ChevronLeft, Sun, Hand, Heart, ShieldCheck, BookOpen, Sparkles, Coffee, ExternalLink } from 'lucide-react';
 
-DSE 中文科考試模擬分析
-我的內容
-身心靈復康計劃
-媽媽萬用清單
-DSE 中文科考試模擬分析
-香港中四考試重點與結構
-HTML 模板建立與優化
-Geography Exam Paper: Rivers and Coasts
-個人專業簡介模板製作
-AI 提示詞優化與事實查核
-提示詞優化與事實查核流程
-與 Gemini 對話
-[角色任務]：你是一位專精於香港中學文憑考試（HKDSE）課程的資深教育顧問。[背景資訊]：使用者為香港中四學生，正準備上學期期中/期末考試，需要了解核心科目及選修科的考卷結構與典型題目。[具體指令]：1. 附上範圍, 使用及分析中文科的中四上學期常見考點。2. 列出考卷問題及結構（如卷一、卷二.....等如DSE模擬格式及考核）。3. 提供DSE典型的模擬題目範例。[約束條件]：使用繁體中文，可寫及語音作答, 你需提供答案及語氣專業且鼓勵，內容需符合 2025/26 學年的最新課程指引，嚴禁虛構課程內容。4.全卷100分. 5. in html
+const Presentation = () => {
+  const [currentSlide, setCurrentSlide] = useState(0);
 
-你好！我是你的 AI 教育顧問。針對你提供的國際基督教育優質音樂中學暨小學 2025-2026 年度十年級（中四）中國語文科上學期考試範圍，我已為你完成提示詞優化並進行深度分析。
+  const slides = [
+    {
+      id: 1,
+      type: "title",
+      title: "遇見耶穌：光與愛的故事",
+      subtitle: "兩個奇妙的神蹟與紀念",
+      bgColor: "bg-blue-100",
+      icon: <Sparkles className="w-24 h-24 text-yellow-500" />,
+      attribute: "準備好開始了嗎？",
+      scripture: "",
+      teacherNote: "開場白：各位同學，如果世界上沒有光，會變成什麼樣子？今天我們要認識一位「超級醫生」和一份「特別的禮物」。"
+    },
+    {
+      id: 2,
+      type: "content",
+      title: "生來就看不見...",
+      bgColor: "bg-slate-800",
+      textColor: "text-white",
+      icon: <div className="relative">
+              <div className="w-32 h-32 bg-gray-900 rounded-full flex items-center justify-center border-4 border-gray-600">
+                <span className="text-4xl">🕶️</span>
+              </div>
+              <Sun className="absolute -top-4 -right-4 w-16 h-16 text-yellow-400 animate-pulse" />
+            </div>,
+      attribute: "耶穌的屬性：世上的光 (Light of the World)",
+      scripture: "「我在世上的時候，是世上的光。」(約翰福音 9:5)",
+      teacherNote: "這人從出生就在黑暗中。耶穌說祂是光，代表祂能照亮我們生命中最黑暗的地方，給我們希望。"
+    },
+    {
+      id: 3,
+      type: "content",
+      title: "泥土變眼藥膏？",
+      bgColor: "bg-amber-100",
+      textColor: "text-amber-900",
+      icon: <div className="flex flex-col items-center">
+              <Hand className="w-24 h-24 text-amber-700" />
+              <div className="mt-2 text-2xl font-bold text-amber-800">泥土 + 唾沫</div>
+            </div>,
+      attribute: "耶穌的屬性：全能的創造主 (The Creator)",
+      scripture: "耶穌吐唾沫在地上，用唾沫和泥抹在瞎子的眼睛上。(約翰福音 9:6)",
+      teacherNote: "為什麼用泥土？神起初是用泥土造人的！耶穌用泥土醫治，代表祂有「創造」的能力，祂能讓壞掉的變好。"
+    },
+    {
+      id: 4,
+      type: "content",
+      title: "洗一洗，看見了！",
+      bgColor: "bg-cyan-100",
+      textColor: "text-cyan-900",
+      icon: <div className="relative">
+              <div className="w-32 h-32 bg-blue-400 rounded-full flex items-center justify-center border-4 border-blue-200 shadow-lg overflow-hidden">
+                <div className="w-full h-full bg-blue-500 opacity-50 animate-pulse"></div>
+                <span className="absolute text-5xl">👀✨</span>
+              </div>
+            </div>,
+      attribute: "信心的功課：順服",
+      scripture: "他去一洗，回頭就看見了。(約翰福音 9:7)",
+      teacherNote: "瞎子沒有嫌泥巴髒，他乖乖聽話去洗。他的信心加上耶穌的大能，神蹟就發生了！"
+    },
+    {
+      id: 5,
+      type: "content",
+      title: "最後的晚餐",
+      bgColor: "bg-rose-50",
+      textColor: "text-rose-900",
+      icon: <div className="flex gap-4">
+              <Coffee className="w-20 h-20 text-rose-600" />
+              <div className="w-20 h-20 rounded-full bg-orange-200 border-4 border-orange-400 flex items-center justify-center text-3xl">🍞</div>
+            </div>,
+      attribute: "耶穌的屬性：捨己的救主 (The Savior)",
+      scripture: "耶穌拿起餅來，祝謝了，就擘開... (哥林多前書 11:24)",
+      teacherNote: "鏡頭轉到耶穌被抓的那晚。這不是普通的晚餐，耶穌要留下一份最重要的禮物給我們。"
+    },
+    {
+      id: 6,
+      type: "content",
+      title: "擘開的餅 = 身體",
+      bgColor: "bg-orange-50",
+      textColor: "text-orange-900",
+      icon: <div className="flex items-center">
+               <div className="w-16 h-16 bg-orange-300 rounded-l-lg border-r-2 border-dashed border-orange-500"></div>
+               <div className="w-16 h-16 bg-orange-300 rounded-r-lg transform translate-x-2 translate-y-2"></div>
+            </div>,
+      attribute: "重點：犧牲與醫治",
+      scripture: "「這是我的身體，為你們捨的。你們應當如此行，為的是記念我。」",
+      teacherNote: "餅被擘開（剝開）時會發出聲音，就像耶穌的身體為我們受傷。祂受傷，讓我們得醫治、得原諒。"
+    },
+    {
+      id: 7,
+      type: "content",
+      title: "杯中的約定",
+      bgColor: "bg-red-100",
+      textColor: "text-red-900",
+      icon: <ShieldCheck className="w-24 h-24 text-red-600" />,
+      attribute: "耶穌的屬性：立約者 (Covenant Maker)",
+      scripture: "「這杯是用我的血所立的新約。」(哥林多前書 11:25)",
+      teacherNote: "這杯代表耶穌的血。什麼是「新約」？就是耶穌跟我們打勾勾約定：「只要相信我，你的罪就永遠被原諒！」"
+    },
+    {
+      id: 8,
+      type: "summary",
+      title: "耶穌的名片",
+      bgColor: "bg-indigo-600",
+      textColor: "text-white",
+      icon: <BookOpen className="w-24 h-24 text-yellow-300" />,
+      attribute: "今天學到了什麼？",
+      scripture: "耶穌不只是歷史人物，祂是...",
+      teacherNote: "總結：1. 世上的光（趕走黑暗） 2. 創造主（醫治我們） 3. 救主（為我們犧牲）。下次領聖餐時，記得跟祂說謝謝喔！"
+    }
+  ];
 
-以下是針對你這份範圍所規劃的 DSE 模擬考核結構、重點分析及典型題目示範。
+  const nextSlide = () => {
+    if (currentSlide < slides.length - 1) setCurrentSlide(curr => curr + 1);
+  };
 
-第一步：專家優化（提示詞轉化）
-[角色任務]：你是一位深耕香港 DSE 中文科課程、精通考評局（HKEAA）評分準則的資深學科顧問。 [背景資訊]：針對一名就讀中四（十年級）的學生，依據其提供的 2025-2026 學年上學期考試範圍表（涵蓋《論君子》、《勸學》、《論孝》及《六國論》等篇章），制定考卷模擬方案。 [具體指令]：
+  const prevSlide = () => {
+    if (currentSlide > 0) setCurrentSlide(curr => curr - 1);
+  };
 
-依照提供範圍，拆解卷一（閱讀）與卷二（寫作）的結構。
+  const slide = slides[currentSlide];
 
-針對「指定文言篇章」與「實用寫作」產出符合 DSE 趨勢的模擬題目。
+  return (
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 font-sans p-4">
+      {/* Main Slide Container */}
+      <div className={`relative w-full max-w-4xl aspect-[4/3] ${slide.bgColor} rounded-3xl shadow-2xl overflow-hidden transition-colors duration-500 flex flex-col`}>
+        
+        {/* Progress Bar */}
+        <div className="absolute top-0 left-0 w-full h-2 bg-gray-200/30">
+          <div 
+            className="h-full bg-yellow-400 transition-all duration-300"
+            style={{ width: `${((currentSlide + 1) / slides.length) * 100}%` }}
+          ></div>
+        </div>
 
-提供標準答案大綱、解析及應考策略。 [約束條件]：使用繁體中文，HTML 格式呈現，語氣專業且具鼓勵性。內容須嚴格遵守 2025/26 學年課程邏輯，總分設定為 100 分。
+        {/* Slide Content */}
+        <div className={`flex-1 flex flex-col items-center justify-center p-8 text-center ${slide.textColor || 'text-gray-800'}`}>
+          
+          {/* Top Icon/Image Area */}
+          <div className="mb-6 transform hover:scale-110 transition-transform duration-300">
+            {slide.icon}
+          </div>
 
-第二步：直接答覆（模擬考卷分析與示範）
-HTML
-<!DOCTYPE html>
-<html lang="zh-Hant">
-<head>
-<meta charset="UTF-8">
-<title>中四中文科上學期考試模擬結構與策略</title>
-<style>
-    body { font-family: "Microsoft JhengHei", sans-serif; line-height: 1.6; color: #333; }
-    h2 { color: #2c3e50; border-left: 5px solid #3498db; padding-left: 10px; }
-    h3 { color: #2980b9; margin-top: 20px; }
-    .highlight { background-color: #fcf8e3; padding: 10px; border: 1px solid #faebcc; border-radius: 4px; }
-    table { width: 100%; border-collapse: collapse; margin: 15px 0; }
-    th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
-    th { background-color: #f2f2f2; }
-    .tips { color: #e67e22; font-weight: bold; }
-    .exam-box { border: 2px solid #2c3e50; padding: 20px; margin: 20px 0; }
-</style>
-</head>
-<body>
+          {/* Title */}
+          <h1 className="text-4xl md:text-5xl font-extrabold mb-4 tracking-tight drop-shadow-sm">
+            {slide.title}
+          </h1>
+          
+          {/* Subtitle (if title slide) */}
+          {slide.subtitle && (
+            <h2 className="text-2xl opacity-90 mb-8">{slide.subtitle}</h2>
+          )}
 
-    <p>你好！看到你的考試範圍，這是一份非常標準且具備 DSE 銜接難度的範圍。你目前的重點在於<strong>「文言基礎（字詞、語譯）」</strong>以及<strong>「實用文格式（書信、演講辭）」</strong>。以下我為你將考試內容轉化為 DSE 模擬格式：</p>
+          {/* Attribute Badge */}
+          <div className="inline-block bg-white/90 backdrop-blur-sm text-indigo-600 px-6 py-2 rounded-full font-bold text-lg shadow-md mb-6 border-2 border-indigo-100">
+            {slide.attribute}
+          </div>
 
-    <h2>一、 考卷結構與分數分佈 (全卷 100 分)</h2>
-    <table>
-        <tr>
-            <th>卷別</th>
-            <th>考核內容</th>
-            <th>分數</th>
-            <th>考核形式</th>
-        </tr>
-        <tr>
-            <td><strong>卷一：閱讀能力</strong></td>
-            <td>甲部：指定文言篇章 (30%)<br>乙部：課外閱讀理解 (70%)</td>
-            <td>50分 (加權後)</td>
-            <td>字詞解釋、句子語譯、問答題、比較題、修辭辨析。</td>
-        </tr>
-        <tr>
-            <td><strong>卷二：寫作能力</strong></td>
-            <td>甲部：實用寫作 (書信/演講辭)<br>乙部：命題寫作 (三選一)</td>
-            <td>50分 (加權後)</td>
-            <td>根據閱讀材料寫作實用文；650字以上長文寫作。</td>
-        </tr>
-    </table>
+          {/* Scripture Box */}
+          {slide.scripture && (
+            <div className="bg-white/40 backdrop-blur-md p-6 rounded-xl max-w-2xl border border-white/50 shadow-inner">
+              <p className="text-xl md:text-2xl font-serif leading-relaxed">
+                {slide.scripture}
+              </p>
+            </div>
+          )}
+        </div>
 
-    <hr>
+        {/* Teacher's Note Section (Bottom) */}
+        <div className="bg-black/10 backdrop-blur-lg p-4 text-left border-t border-black/5">
+          <div className="flex items-start gap-3 max-w-3xl mx-auto">
+            <span className="bg-yellow-400 text-yellow-900 text-xs font-bold px-2 py-1 rounded uppercase tracking-wider mt-1 shrink-0">
+              老師小抄
+            </span>
+            <p className={`text-sm md:text-base font-medium ${slide.type === 'title' || slide.id === 2 || slide.id === 8 ? 'text-white/90' : 'text-gray-800/80'}`}>
+              {slide.teacherNote}
+            </p>
+          </div>
+        </div>
 
-    <h2>二、 卷一：甲部「指定文言篇章」典型題目示範</h2>
-    <p class="highlight">【範圍涵蓋】：論君子、勸學、論孝、六國論 (寫作手法)</p>
+      </div>
 
-    <div class="exam-box">
-        <h3>Q1. 字詞解釋 (參考《論君子》、《勸學》)</h3>
-        <p>解釋下列句中標有▲號的字詞：</p>
-        <ul>
-            <li>(1) <strong>君子喻▲於義。</strong> (《論君子》) <br>答：【知曉 / 明白】</li>
-            <li>(2) <strong>假▲輿馬者，非利足也。</strong> (《勸學》) <br>答：【憑藉 / 藉助】</li>
-        </ul>
+      {/* Navigation Controls */}
+      <div className="flex gap-6 mt-8">
+        <button 
+          onClick={prevSlide}
+          disabled={currentSlide === 0}
+          className={`flex items-center gap-2 px-6 py-3 rounded-full font-bold shadow-lg transition-all transform hover:-translate-y-1 ${currentSlide === 0 ? 'bg-gray-300 text-gray-500 cursor-not-allowed' : 'bg-white text-indigo-600 hover:bg-indigo-50'}`}
+        >
+          <ChevronLeft size={24} /> 上一張
+        </button>
+        
+        <span className="flex items-center font-bold text-gray-500">
+          {currentSlide + 1} / {slides.length}
+        </span>
 
-        <h3>Q2. 句子語譯 (參考《論孝》)</h3>
-        <p>試將下列句子譯為白話文：<br><strong>「今之孝者，是謂能養。」</strong></p>
-        <p class="tips">【內部分析】：此題考核「養」字的讀音與意義區別（音 yàng，供養）。</p>
-        <p><strong>標準答案：</strong>現在所謂的孝子，只是說能夠供養父母。</p>
+        <button 
+          onClick={nextSlide}
+          disabled={currentSlide === slides.length - 1}
+          className={`flex items-center gap-2 px-6 py-3 rounded-full font-bold shadow-lg transition-all transform hover:-translate-y-1 ${currentSlide === slides.length - 1 ? 'bg-gray-300 text-gray-500 cursor-not-allowed' : 'bg-indigo-600 text-white hover:bg-indigo-700'}`}
+        >
+          下一張 <ChevronRight size={24} />
+        </button>
+      </div>
 
-        <h3>Q3. 比較題 / 分析題 (參考《六國論》)</h3>
-        <p>蘇洵在《六國論》中運用了什麼<strong>論證手法</strong>來指出賄秦的危害？試結合課文內容說明。</p>
-        <p><strong>答案要點：</strong>
-            <br>1. <strong>對比論證</strong>：以「祖先創業之難」對比「子孫割地之易」。
-            <br>2. <strong>比喻論證</strong>：以「抱薪救火」比喻以地事秦，地不盡則火不滅。
-        </p>
+      <div className="mt-8 text-gray-400 text-sm flex items-center gap-2">
+        <ExternalLink size={14} /> 
+        提示：您可以截圖這些畫面貼到 PPT 中，或直接投影此畫面教學
+      </div>
     </div>
+  );
+};
 
-    <hr>
-
-    <h2>三、 卷二：實用寫作與命題寫作預測</h2>
-
-    <h3>甲部：實用寫作 (預測：演講辭)</h3>
-    <p>範圍提到「書信」與「演講辭」。因中四初階常考校內情境，演講辭機率極高。</p>
-    <div class="highlight">
-        <strong>題目預設：</strong>試以學生會會長身分，擬一份在早會上的演講辭，向同學推廣「孝道文化周」。
-        <br><strong>必須注意：</strong>
-        <ul>
-            <li>格式：自稱、稱呼、問候語、結語（謝謝大家）。</li>
-            <li>語氣：誠懇、具號召力。</li>
-            <li>內容：需整合資料中的活動詳情、舉辦意義。</li>
-        </ul>
-    </div>
-
-    <h3>乙部：命題寫作 (三選一)</h3>
-    <p>範圍強調「借事抒情」與「論證方法」。</p>
-    <ul>
-        <li><strong>記敘抒情類：</strong>「一次失敗的經歷，讓我明白了《勸學》中積累的道理。」(結合課文啟發)</li>
-        <li><strong>議論類：</strong>「有人認為現代社會不再需要『孝』，談談你的看法。」(考核論證手法：舉例、對比)</li>
-    </ul>
-
-    <hr>
-
-    <h2>四、 顧問應考建議</h2>
-    <ul>
-        <li><strong>【文言核心】：</strong>《論君子》與《論孝》的對比常考，建議背誦金句，這對卷二寫作也有極大幫助。</li>
-        <li><strong>【修辭辨析】：</strong>範圍提到的「比喻、對比、排比」，必須能從乙部課外白話文中準確找出並說明其「表達效果」。</li>
-        <li><strong>【內部事實查核】：</strong>根據 2025/26 課程，實用文不再純粹考格式，更看重「整合拓展」能力。請務必練習從閱讀材料中篩選重點。</li>
-    </ul>
-
-    <p style="text-align: center; font-weight: bold; color: #27ae60;">加油！這份範圍雖然紮實，但只要掌握了文言字詞的規律，卷一基本分就能穩拿！</p>
-
-</body>
-</html>
-下一步建議
-【資料充足，確認可執行】： 你是否需要我針對**《六國論》的寫作手法**（如對比、比喻）或是演講辭的標準範文格式提供更具體的拆解與寫作模板？
-
-
-
-
-
-
-
-DSE 中文科考試模擬分析
-我的內容
-身心靈復康計劃
-媽媽萬用清單
-DSE 中文科考試模擬分析
-香港中四考試重點與結構
-HTML 模板建立與優化
-Geography Exam Paper: Rivers and Coasts
-個人專業簡介模板製作
-AI 提示詞優化與事實查核
-提示詞優化與事實查核流程
-與 Gemini 對話
-[角色任務]：你是一位專精於香港中學文憑考試（HKDSE）課程的資深教育顧問。[背景資訊]：使用者為香港中四學生，正準備上學期期中/期末考試，需要了解核心科目及選修科的考卷結構與典型題目。[具體指令]：1. 附上範圍, 使用及分析中文科的中四上學期常見考點。2. 列出考卷問題及結構（如卷一、卷二.....等如DSE模擬格式及考核）。3. 提供DSE典型的模擬題目範例。[約束條件]：使用繁體中文，可寫及語音作答, 你需提供答案及語氣專業且鼓勵，內容需符合 2025/26 學年的最新課程指引，嚴禁虛構課程內容。4.全卷100分. 5. in html
-
-你好！我是你的 AI 教育顧問。針對你提供的國際基督教育優質音樂中學暨小學 2025-2026 年度十年級（中四）中國語文科上學期考試範圍，我已為你完成提示詞優化並進行深度分析。
-
-以下是針對你這份範圍所規劃的 DSE 模擬考核結構、重點分析及典型題目示範。
-
-第一步：專家優化（提示詞轉化）
-[角色任務]：你是一位深耕香港 DSE 中文科課程、精通考評局（HKEAA）評分準則的資深學科顧問。 [背景資訊]：針對一名就讀中四（十年級）的學生，依據其提供的 2025-2026 學年上學期考試範圍表（涵蓋《論君子》、《勸學》、《論孝》及《六國論》等篇章），制定考卷模擬方案。 [具體指令]：
-
-依照提供範圍，拆解卷一（閱讀）與卷二（寫作）的結構。
-
-針對「指定文言篇章」與「實用寫作」產出符合 DSE 趨勢的模擬題目。
-
-提供標準答案大綱、解析及應考策略。 [約束條件]：使用繁體中文，HTML 格式呈現，語氣專業且具鼓勵性。內容須嚴格遵守 2025/26 學年課程邏輯，總分設定為 100 分。
-
-第二步：直接答覆（模擬考卷分析與示範）
-HTML
-<!DOCTYPE html>
-<html lang="zh-Hant">
-<head>
-<meta charset="UTF-8">
-<title>中四中文科上學期考試模擬結構與策略</title>
-<style>
-    body { font-family: "Microsoft JhengHei", sans-serif; line-height: 1.6; color: #333; }
-    h2 { color: #2c3e50; border-left: 5px solid #3498db; padding-left: 10px; }
-    h3 { color: #2980b9; margin-top: 20px; }
-    .highlight { background-color: #fcf8e3; padding: 10px; border: 1px solid #faebcc; border-radius: 4px; }
-    table { width: 100%; border-collapse: collapse; margin: 15px 0; }
-    th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
-    th { background-color: #f2f2f2; }
-    .tips { color: #e67e22; font-weight: bold; }
-    .exam-box { border: 2px solid #2c3e50; padding: 20px; margin: 20px 0; }
-</style>
-</head>
-<body>
-
-    <p>你好！看到你的考試範圍，這是一份非常標準且具備 DSE 銜接難度的範圍。你目前的重點在於<strong>「文言基礎（字詞、語譯）」</strong>以及<strong>「實用文格式（書信、演講辭）」</strong>。以下我為你將考試內容轉化為 DSE 模擬格式：</p>
-
-    <h2>一、 考卷結構與分數分佈 (全卷 100 分)</h2>
-    <table>
-        <tr>
-            <th>卷別</th>
-            <th>考核內容</th>
-            <th>分數</th>
-            <th>考核形式</th>
-        </tr>
-        <tr>
-            <td><strong>卷一：閱讀能力</strong></td>
-            <td>甲部：指定文言篇章 (30%)<br>乙部：課外閱讀理解 (70%)</td>
-            <td>50分 (加權後)</td>
-            <td>字詞解釋、句子語譯、問答題、比較題、修辭辨析。</td>
-        </tr>
-        <tr>
-            <td><strong>卷二：寫作能力</strong></td>
-            <td>甲部：實用寫作 (書信/演講辭)<br>乙部：命題寫作 (三選一)</td>
-            <td>50分 (加權後)</td>
-            <td>根據閱讀材料寫作實用文；650字以上長文寫作。</td>
-        </tr>
-    </table>
-
-    <hr>
-
-    <h2>二、 卷一：甲部「指定文言篇章」典型題目示範</h2>
-    <p class="highlight">【範圍涵蓋】：論君子、勸學、論孝、六國論 (寫作手法)</p>
-
-    <div class="exam-box">
-        <h3>Q1. 字詞解釋 (參考《論君子》、《勸學》)</h3>
-        <p>解釋下列句中標有▲號的字詞：</p>
-        <ul>
-            <li>(1) <strong>君子喻▲於義。</strong> (《論君子》) <br>答：【知曉 / 明白】</li>
-            <li>(2) <strong>假▲輿馬者，非利足也。</strong> (《勸學》) <br>答：【憑藉 / 藉助】</li>
-        </ul>
-
-        <h3>Q2. 句子語譯 (參考《論孝》)</h3>
-        <p>試將下列句子譯為白話文：<br><strong>「今之孝者，是謂能養。」</strong></p>
-        <p class="tips">【內部分析】：此題考核「養」字的讀音與意義區別（音 yàng，供養）。</p>
-        <p><strong>標準答案：</strong>現在所謂的孝子，只是說能夠供養父母。</p>
-
-        <h3>Q3. 比較題 / 分析題 (參考《六國論》)</h3>
-        <p>蘇洵在《六國論》中運用了什麼<strong>論證手法</strong>來指出賄秦的危害？試結合課文內容說明。</p>
-        <p><strong>答案要點：</strong>
-            <br>1. <strong>對比論證</strong>：以「祖先創業之難」對比「子孫割地之易」。
-            <br>2. <strong>比喻論證</strong>：以「抱薪救火」比喻以地事秦，地不盡則火不滅。
-        </p>
-    </div>
-
-    <hr>
-
-    <h2>三、 卷二：實用寫作與命題寫作預測</h2>
-
-    <h3>甲部：實用寫作 (預測：演講辭)</h3>
-    <p>範圍提到「書信」與「演講辭」。因中四初階常考校內情境，演講辭機率極高。</p>
-    <div class="highlight">
-        <strong>題目預設：</strong>試以學生會會長身分，擬一份在早會上的演講辭，向同學推廣「孝道文化周」。
-        <br><strong>必須注意：</strong>
-        <ul>
-            <li>格式：自稱、稱呼、問候語、結語（謝謝大家）。</li>
-            <li>語氣：誠懇、具號召力。</li>
-            <li>內容：需整合資料中的活動詳情、舉辦意義。</li>
-        </ul>
-    </div>
-
-    <h3>乙部：命題寫作 (三選一)</h3>
-    <p>範圍強調「借事抒情」與「論證方法」。</p>
-    <ul>
-        <li><strong>記敘抒情類：</strong>「一次失敗的經歷，讓我明白了《勸學》中積累的道理。」(結合課文啟發)</li>
-        <li><strong>議論類：</strong>「有人認為現代社會不再需要『孝』，談談你的看法。」(考核論證手法：舉例、對比)</li>
-    </ul>
-
-    <hr>
-
-    <h2>四、 顧問應考建議</h2>
-    <ul>
-        <li><strong>【文言核心】：</strong>《論君子》與《論孝》的對比常考，建議背誦金句，這對卷二寫作也有極大幫助。</li>
-        <li><strong>【修辭辨析】：</strong>範圍提到的「比喻、對比、排比」，必須能從乙部課外白話文中準確找出並說明其「表達效果」。</li>
-        <li><strong>【內部事實查核】：</strong>根據 2025/26 課程，實用文不再純粹考格式，更看重「整合拓展」能力。請務必練習從閱讀材料中篩選重點。</li>
-    </ul>
-
-    <p style="text-align: center; font-weight: bold; color: #27ae60;">加油！這份範圍雖然紮實，但只要掌握了文言字詞的規律，卷一基本分就能穩拿！</p>
-
-</body>
-</html>
-下一步建議
-【資料充足，確認可執行】： 你是否需要我針對**《六國論》的寫作手法**（如對比、比喻）或是演講辭的標準範文格式提供更具體的拆解與寫作模板？
-
-
-
-
-Gemini 可能會出錯，請加以複查
-
+export default Presentation;
