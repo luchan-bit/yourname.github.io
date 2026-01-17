@@ -3,610 +3,638 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI 成熟度評估 (AI Maturity Assessment)</title>
+    <title>2026 每日靈修 | 歸心・神操・安息</title>
     <style>
-        /* --- Dark Mode Aesthetic Theme (Tailwind-like) --- */
         :root {
-            --bg-primary: #0f172a;    /* Slate 900 */
-            --bg-secondary: #1e293b;  /* Slate 800 */
-            --bg-accent: #334155;     /* Slate 700 */
-            --text-primary: #f8fafc;  /* Slate 50 */
-            --text-secondary: #94a3b8;/* Slate 400 */
-            --primary: #6366f1;       /* Indigo 500 */
-            --primary-hover: #4f46e5; /* Indigo 600 */
-            --success: #10b981;       /* Emerald 500 */
-            --warning: #f59e0b;       /* Amber 500 */
-            --danger: #ef4444;        /* Red 500 */
-            --radius: 16px;
+            --primary-color: #5D737E;
+            --secondary-color: #E0ECE4;
+            --accent-color: #C19875;
+            --text-color: #333;
+            --bg-color: #F7F9F9;
+            --card-bg: #ffffff;
         }
-
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', system-ui, -apple-system, sans-serif; }
 
         body {
-            background-color: var(--bg-primary);
-            color: var(--text-primary);
+            font-family: 'Noto Sans TC', 'Microsoft JhengHei', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            line-height: 1.8;
+            transition: background-color 0.5s;
+        }
+
+        /* Layout */
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            padding: 40px 0 20px;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+            font-weight: 300;
+            letter-spacing: 2px;
+        }
+
+        .subtitle {
+            color: #777;
+            font-size: 1rem;
+        }
+
+        /* Date Navigation */
+        .date-nav {
             display: flex;
             justify-content: center;
-            min-height: 100vh;
-            padding: 20px;
-            line-height: 1.6;
+            align-items: center;
+            margin-bottom: 30px;
+            background: var(--card-bg);
+            padding: 15px;
+            border-radius: 50px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
         }
 
-        .container {
-            width: 100%;
-            max-width: 650px;
-            position: relative;
-        }
-
-        /* --- Animations --- */
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        /* --- Cards --- */
-        .card {
-            background-color: var(--bg-secondary);
-            border: 1px solid var(--bg-accent);
-            border-radius: var(--radius);
-            padding: 2rem;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
-            display: none;
-            animation: slideIn 0.5s ease-out;
-        }
-
-        .card.active { display: block; }
-
-        /* --- Typography --- */
-        h1 {
-            font-size: 1.8rem;
-            font-weight: 800;
-            text-align: center;
-            margin-bottom: 2rem;
-            background: linear-gradient(135deg, #818cf8 0%, #c084fc 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        h2 { font-size: 1.5rem; margin-bottom: 1rem; color: var(--text-primary); }
-        h3 { font-size: 1.1rem; margin-bottom: 1rem; font-weight: 600; color: var(--text-primary); }
-        p { color: var(--text-secondary); margin-bottom: 1.5rem; }
-
-        /* --- Buttons --- */
-        .btn {
-            display: block;
-            width: 100%;
-            padding: 14px;
-            background-color: var(--primary);
-            color: white;
+        .date-nav button {
+            background: none;
             border: none;
-            border-radius: 12px;
-            font-size: 1rem;
-            font-weight: 600;
+            font-size: 1.5rem;
+            color: var(--primary-color);
             cursor: pointer;
-            transition: all 0.2s;
+            padding: 0 20px;
+            transition: transform 0.2s;
+        }
+
+        .date-nav button:hover {
+            transform: scale(1.2);
+        }
+
+        #currentDate {
+            font-size: 1.2rem;
+            font-weight: 500;
+            min-width: 150px;
             text-align: center;
         }
 
-        .btn:hover { background-color: var(--primary-hover); transform: translateY(-2px); }
-        .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
-        .btn-outline { background: transparent; border: 2px solid var(--bg-accent); margin-top: 10px; }
-        .btn-outline:hover { border-color: var(--primary); background: rgba(99, 102, 241, 0.1); }
+        /* Modules */
+        .module {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+            border-left: 5px solid var(--accent-color);
+            transition: transform 0.3s ease;
+        }
 
-        /* --- Quiz Options --- */
-        .options-group { display: flex; flex-direction: column; gap: 12px; }
+        .module:hover {
+            transform: translateY(-3px);
+        }
 
-        .option-label {
+        .module-title {
+            font-size: 1.3rem;
+            color: var(--primary-color);
+            margin-bottom: 20px;
             display: flex;
             align-items: center;
-            padding: 16px;
-            background-color: rgba(15, 23, 42, 0.5);
-            border: 2px solid var(--bg-accent);
-            border-radius: 12px;
-            cursor: pointer;
-            transition: all 0.2s;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
         }
 
-        .option-label:hover { border-color: var(--primary); background-color: rgba(99, 102, 241, 0.05); }
-        .option-label.selected { border-color: var(--primary); background-color: rgba(99, 102, 241, 0.1); }
+        .module-title i {
+            margin-right: 10px;
+        }
 
-        .radio-indicator {
-            width: 20px;
-            height: 20px;
-            border: 2px solid var(--text-secondary);
+        /* Breathing Exercise */
+        .breathing-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px 0;
+        }
+
+        .circle {
+            width: 120px;
+            height: 120px;
+            background-color: var(--secondary-color);
             border-radius: 50%;
-            margin-right: 15px;
-            flex-shrink: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--primary-color);
+            font-size: 1.2rem;
             position: relative;
+            transform: scale(1);
         }
 
-        .option-label.selected .radio-indicator { border-color: var(--primary); }
-        .option-label.selected .radio-indicator::after {
+        .circle::after {
             content: '';
             position: absolute;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            width: 10px; height: 10px;
-            background-color: var(--primary);
-            border-radius: 50%;
-        }
-
-        input[type="radio"] { display: none; }
-
-        /* --- Progress Bar --- */
-        .progress-track {
-            height: 6px;
-            background-color: var(--bg-accent);
-            border-radius: 10px;
-            margin-bottom: 2rem;
-            overflow: hidden;
-        }
-        
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--primary), #a855f7);
-            width: 0%;
-            transition: width 0.4s ease;
-        }
-
-        /* --- Result Section --- */
-        .result-header { text-align: center; margin-bottom: 2rem; }
-        .level-badge {
-            display: inline-block;
-            padding: 6px 16px;
-            background: rgba(16, 185, 129, 0.15);
-            color: var(--success);
-            border-radius: 20px;
-            font-size: 0.9rem;
-            font-weight: 600;
-            margin-bottom: 10px;
-            border: 1px solid rgba(16, 185, 129, 0.3);
-        }
-
-        .radar-chart-container {
             width: 100%;
-            height: 250px;
+            height: 100%;
+            border-radius: 50%;
+            border: 2px solid var(--accent-color);
+            opacity: 0;
+        }
+
+        .breathe-anim {
+            animation: breathe 8s infinite ease-in-out;
+        }
+
+        @keyframes breathe {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.8); }
+        }
+
+        .breath-text {
+            margin-top: 20px;
+            font-style: italic;
+            color: #888;
+        }
+
+        /* Audio Player UI */
+        .audio-player {
+            background: #f1f5f6;
+            padding: 15px;
+            border-radius: 10px;
             display: flex;
-            justify-content: center;
             align-items: center;
-            margin-bottom: 2rem;
-            position: relative;
+            justify-content: space-between;
         }
 
-        /* SVG Styles */
-        svg { overflow: visible; }
-        .radar-bg { fill: none; stroke: var(--bg-accent); stroke-width: 1; }
-        .radar-area { fill: rgba(99, 102, 241, 0.2); stroke: var(--primary); stroke-width: 2; }
-        .radar-label { font-size: 10px; fill: var(--text-secondary); text-anchor: middle; }
-
-        /* Recommendations */
-        .recommendation-box {
-            background-color: rgba(15, 23, 42, 0.6);
-            border-left: 4px solid var(--primary);
-            padding: 1.5rem;
-            border-radius: 0 12px 12px 0;
-            margin-bottom: 1.5rem;
-        }
-        
-        .recommendation-box h4 {
-            color: var(--text-primary);
-            margin-bottom: 0.8rem;
+        .btn-audio {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 0.9rem;
             display: flex;
             align-items: center;
             gap: 8px;
         }
-
-        .skill-tag {
-            font-size: 0.75rem;
-            background: var(--bg-accent);
-            padding: 2px 8px;
-            border-radius: 4px;
-            color: #a5b4fc;
+        
+        .btn-audio.playing {
+            background: var(--accent-color);
         }
 
-        .next-step-list {
-            list-style: none;
+        /* Devotional Content */
+        .scripture {
+            font-family: 'Times New Roman', serif;
+            font-size: 1.1rem;
+            background: #fffbf5;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border-left: 3px solid var(--accent-color);
+        }
+
+        .guidance-text {
+            white-space: pre-wrap;
+            margin-bottom: 20px;
+        }
+
+        .action-area {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .btn-main {
+            background: linear-gradient(135deg, var(--primary-color), #4a5c65);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.1rem;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(93, 115, 126, 0.4);
+            transition: all 0.3s;
+        }
+
+        .btn-main:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(93, 115, 126, 0.5);
         }
         
-        .next-step-list li {
-            position: relative;
-            padding-left: 20px;
-            margin-bottom: 10px;
-            color: var(--text-secondary);
-            font-size: 0.95rem;
-        }
-
-        .next-step-list li::before {
-            content: '→';
-            position: absolute;
+        /* Modal for methods */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
             left: 0;
-            color: var(--primary);
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+        }
+        
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #aaa;
         }
 
-        /* Mobile Adjustments */
-        @media (max-width: 480px) {
-            .card { padding: 1.5rem; }
-            h1 { font-size: 1.5rem; }
-            .option-label { padding: 12px; }
-            .radar-chart-container { height: 200px; }
+        footer {
+            text-align: center;
+            padding: 40px 0;
+            color: #999;
+            font-size: 0.8rem;
+        }
+
+        /* Utility */
+        .hidden { display: none; }
+        
+        @media (max-width: 600px) {
+            h1 { font-size: 1.8rem; }
+            .container { padding: 15px; }
+            .module { padding: 20px; }
         }
     </style>
+    <!-- Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
 <body>
 
 <div class="container">
-    <h1>AI Maturity Assessment</h1>
+    <header>
+        <h1>靈修．歸心．2026</h1>
+        <div class="subtitle">每日與主同行的靜謐時刻</div>
+    </header>
 
-    <!-- 1. Welcome Screen -->
-    <div id="welcome-screen" class="card active">
-        <div style="text-align: center; margin-bottom: 2rem;">
-            <div style="font-size: 4rem; margin-bottom: 1rem;">🧠</div>
-            <h2>你的 AI 成熟度在哪個層級？</h2>
-            <p>這不僅僅是一個測驗，這是一份升級指南。從「探索者」到「構建者」，我們將根據 5 級 AI 成熟度架構，分析你目前的落點並提供具體的學習建議。</p>
-        </div>
-        
-        <div style="background: var(--bg-primary); padding: 1.5rem; border-radius: 12px; margin-bottom: 2rem;">
-            <h3 style="font-size: 0.95rem; margin-bottom: 0.5rem; opacity: 0.9;">測驗內容涵蓋：</h3>
-            <ul style="padding-left: 1.5rem; color: var(--text-secondary); font-size: 0.9rem;">
-                <li>提示工程 (Prompt Engineering) 能力</li>
-                <li>系統思維與工作流整合</li>
-                <li>AI 評估與風險意識</li>
-            </ul>
-        </div>
-
-        <button class="btn" onclick="app.startQuiz()">開始評估</button>
+    <!-- Calendar Navigation -->
+    <div class="date-nav">
+        <button onclick="changeDate(-1)"><i class="fas fa-chevron-left"></i></button>
+        <span id="currentDate">2026年1月1日</span>
+        <button onclick="changeDate(1)"><i class="fas fa-chevron-right"></i></button>
     </div>
 
-    <!-- 2. Quiz Screen -->
-    <div id="quiz-screen" class="card">
-        <div class="progress-track">
-            <div id="progress-bar" class="progress-fill"></div>
+    <!-- Breathing Exercise -->
+    <div class="module">
+        <div class="module-title"><i class="fas fa-lungs"></i> 靈性呼吸 (Breath Prayer)</div>
+        <div class="breathing-container">
+            <div class="circle" id="breathCircle">吸氣</div>
+            <div class="breath-text" id="breathText">準備開始...</div>
         </div>
-
-        <div id="question-container">
-            <!-- Question Rendered Here -->
+        <div style="text-align: center;">
+            <button class="btn-audio" onclick="toggleBreathing()">
+                <i class="fas fa-play" id="breathIcon"></i> <span id="breathBtnText">開始呼吸練習</span>
+            </button>
         </div>
-
-        <button id="next-btn" class="btn" style="margin-top: 2rem;" onclick="app.nextQuestion()" disabled>下一題</button>
     </div>
 
-    <!-- 3. Result Screen -->
-    <div id="result-screen" class="card">
-        <div class="result-header">
-            <span class="level-badge" id="result-level-num">Level Calculating...</span>
-            <h2 id="result-title">分析完成</h2>
-            <p id="result-desc">以下是您的能力雷達圖與下一步學習建議。</p>
-        </div>
-
-        <!-- Radar Chart -->
-        <div class="radar-chart-container" id="radar-container">
-            <!-- SVG Rendered via JS -->
-        </div>
-
-        <div style="margin-bottom: 2rem;">
-            <h3 style="border-bottom: 1px solid var(--bg-accent); padding-bottom: 10px; margin-bottom: 1.5rem;">🚀 您的升級路徑 (Next Steps)</h3>
-            <div id="recommendations-container">
-                <!-- Recommendations Rendered Here -->
+    <!-- Spiritual Music & Voice Guide -->
+    <div class="module">
+        <div class="module-title"><i class="fas fa-music"></i> 靈修氛圍</div>
+        <div class="audio-player">
+            <div>
+                <strong>背景輕音樂</strong>
+                <div style="font-size: 0.8rem; color: #666;">建議配戴耳機</div>
             </div>
+            <button class="btn-audio" onclick="toggleMusic()" id="musicBtn">
+                <i class="fas fa-play"></i> 播放音樂
+            </button>
+            <audio id="bgMusic" loop>
+                <!-- 使用免費的CC0音樂資源作為範例，實際部署可更換 -->
+                <source src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=meditation-impromptu-01-12232.mp3" type="audio/mpeg">
+                您的瀏覽器不支援音訊元素。
+            </audio>
+        </div>
+        <br>
+        <div class="audio-player" style="background: #eef2f5;">
+            <div>
+                <strong>導師聲音導航</strong>
+                <div style="font-size: 0.8rem; color: #666;">朗讀今日靈修指引</div>
+            </div>
+            <button class="btn-audio" onclick="toggleVoiceGuide()" id="voiceBtn">
+                <i class="fas fa-microphone"></i> 開始導引
+            </button>
+        </div>
+    </div>
+
+    <!-- Daily Content -->
+    <div class="module" id="contentArea">
+        <div class="module-title"><i class="fas fa-book-open"></i> 今日靈修：<span id="dailyTitle">回歸生命的本源</span></div>
+        
+        <div class="scripture" id="dailyScripture">
+            「天主是我們存在及生命的本源，靈修就是學習去行自己的生命本源，原來是在慈愛與生命之神的裡面。」
         </div>
 
-        <button class="btn" onclick="location.reload()">重新測驗</button>
+        <div class="guidance-text" id="dailyText">
+            <!-- Content inject via JS -->
+        </div>
+
+        <div class="action-area">
+            <button class="btn-main" onclick="startCenteringPrayer()">
+                <i class="fas fa-praying-hands"></i> 進入 20 分鐘歸心靜禱
+            </button>
+        </div>
+    </div>
+
+    <!-- Examen Section -->
+    <div class="module">
+        <div class="module-title"><i class="fas fa-search"></i> 晚禱：意識省察 (Examen)</div>
+        <p>在一天結束時，邀請您花幾分鐘回顧這一天，在一切事上找到天主。</p>
+        <button class="btn-audio" onclick="showModal('examenModal')">查看省察步驟</button>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 靈修伴侶 | 基於歸心祈禱與依納爵神操傳統設計</p>
+    </footer>
+</div>
+
+<!-- Modal for Examen -->
+<div id="examenModal" class="modal">
+    <div class="modal-content">
+        <span class="close-modal" onclick="closeModal('examenModal')">&times;</span>
+        <h3>意識省察祈禱 (Examen)</h3>
+        <ol>
+            <li><strong>感恩 (Gratitude)</strong>：回顧今天發生的一件好事，為此感謝天主。</li>
+            <li><strong>求光 (Request for Light)</strong>：祈求聖神光照，讓我用天主的眼光看今天。</li>
+            <li><strong>回顧 (Review)</strong>：像看電影一樣回顧今天。我有在哪裡感受到愛的流動？哪裡感受到枯燥或遠離？</li>
+            <li><strong>回應 (Response)</strong>：對今天的過失請求寬恕，對恩典獻上感謝。</li>
+            <li><strong>展望 (Resolve)</strong>：展望明天，祈求天主賜予恩寵，讓我更肖似基督。</li>
+        </ol>
+    </div>
+</div>
+
+<!-- Modal for Centering Prayer Timer -->
+<div id="centeringModal" class="modal">
+    <div class="modal-content" style="text-align: center;">
+        <span class="close-modal" onclick="closeModal('centeringModal')">&times;</span>
+        <h3>歸心靜禱</h3>
+        <p>輕輕閉上眼，默誦您的聖言（如：耶穌、阿爸、愛）。</p>
+        <div id="timerDisplay" style="font-size: 3rem; color: var(--primary-color); margin: 20px 0;">20:00</div>
+        <p id="timerStatus">準備開始...</p>
+        <button class="btn-audio" onclick="stopTimer()">結束祈禱</button>
     </div>
 </div>
 
 <script>
-/**
- * Data Source: 5-Level AI Maturity Framework
- * Based on user-provided NotebookLM research content.
- */
-
-const levels = [
-    {
-        id: 1,
-        title: "探索者 (The Explorer)",
-        subtitle: "升級目標：應用者 (Adopter)",
-        desc: "你還處於隨意聊天的階段。下一步是學會結構化指令，從「好玩」轉向「可用」。",
-        skills: [
-            { name: "結構化提示詞", tag: "必學", content: "學習 CO-STAR 框架。不要只說「幫我寫信」，要定義背景、風格、受眾。" },
-            { name: "角色扮演", tag: "進階", content: "指定 AI 身份（如 ESG 顧問），讓它模擬特定視角。" },
-            { name: "事實查核", tag: "素養", content: "養成查證習慣，建立對 AI 幻覺的辨識能力。" }
-        ]
-    },
-    {
-        id: 2,
-        title: "應用者 (The Adopter)",
-        subtitle: "升級目標：整合者 (Integrator)",
-        desc: "你已能完成單點任務。下一步是將 AI 嵌入工作流，並處理複雜邏輯。",
-        skills: [
-            { name: "提示鏈接 (Chaining)", tag: "核心", content: "將大任務拆解：大綱 → 草稿 → 格式化。這是模組化思考的基礎。" },
-            { name: "少樣本提示 (Few-Shot)", tag: "技巧", content: "提供 2-5 個範例讓 AI 模仿，比零範例 (Zero-shot) 更有效。" },
-            { name: "思維鏈 (CoT)", tag: "邏輯", content: "要求 AI「一步步思考」，減少數學或推理錯誤。" }
-        ]
-    },
-    {
-        id: 3,
-        title: "整合者 (The Integrator)",
-        subtitle: "升級目標：協作者 (Collaborator)",
-        desc: "你已將 AI 視為工具。下一步是將其視為「夥伴」，利用它突破思維盲點。",
-        skills: [
-            { name: "多重角色辯論", tag: "策略", content: "讓 AI 同時扮演正反方（如創業者 vs 財務長）進行辯論，避免順從偏誤。" },
-            { name: "蘇格拉底提問", tag: "思維", content: "要求 AI「以教練方式引導我」，反問你問題而非直接給答案。" },
-            { name: "密度鏈 (CoD)", tag: "優化", content: "透過遞迴優化，在字數不變下塞入更多實體資訊，提升內容含金量。" }
-        ]
-    },
-    {
-        id: 4,
-        title: "協作者 (The Collaborator)",
-        subtitle: "升級目標：構建者 (Builder)",
-        desc: "你已能與 AI 深度協作。下一步是具備「工程思維」，開始構建穩定的系統。",
-        skills: [
-            { name: "系統指令 (System Prompt)", tag: "架構", content: "不僅是聊天，而是設定全域行為規範與邊界條件 (Guardrails)。" },
-            { name: "AI 輔助編碼", tag: "Vibe Coding", content: "即使不是工程師，也要能用自然語言引導 AI 寫出自動化腳本。" },
-            { name: "評估測試 (Evals)", tag: "量化", content: "建立測試集 (Test Sets)，客觀衡量 Prompt 效果，而非憑感覺。" }
-        ]
-    },
-    {
-        id: 5,
-        title: "構建者 (The Builder)",
-        subtitle: "邁向：架構師 (Architect)",
-        desc: "你已具備構建能力。下一步是規模化、自動化優化以及安全治理。",
-        skills: [
-            { name: "自動化優化 (DSPy)", tag: "前沿", content: "將提示工程視為編譯問題，讓演算法自動優化 Prompt。" },
-            { name: "成本效能權衡", tag: "經濟", content: "分析 Token 消耗與模型表現，選擇最優模型組合。" },
-            { name: "AI 安全", tag: "治理", content: "防禦 Prompt Injection，設計 Input/Output 過濾機制。" }
-        ]
-    }
-];
-
-// Questions mapped to the 5 levels concept
-// 1-2pts: Explorer/Adopter mindset
-// 3-4pts: Integrator/Collaborator mindset
-// 5pts: Builder mindset
-const questions = [
-    {
-        text: "當你需要 AI 幫你寫一封重要的商業郵件時，你通常會怎麼做？",
-        options: [
-            { text: "直接說：「幫我寫一封給客戶的信。」", value: 1 },
-            { text: "會加上背景資訊，例如：「我是行銷經理，要寫給潛在客戶...」", value: 2 },
-            { text: "使用特定框架 (如 CO-STAR)，明確定義語氣、受眾、格式限制。", value: 3 },
-            { text: "提供 3 個過去成功的郵件範例 (Few-Shot)，要求它模仿風格。", value: 4 },
-            { text: "我有一套自動化流程，輸入關鍵字後，系統依據客戶畫像自動生成。", value: 5 }
-        ]
-    },
-    {
-        text: "遇到 AI 回答數學或邏輯問題出錯時，你的反應是？",
-        options: [
-            { text: "覺得 AI 很笨，放棄使用。", value: 1 },
-            { text: "重新問一次，看看運氣會不會好一點。", value: 2 },
-            { text: "要求它「請一步步思考 (Let's think step by step)」來展示推理過程。", value: 3 },
-            { text: "我會檢查我的 Prompt 是否有歧義，並嘗試引導它自我修正。", value: 4 },
-            { text: "我會建立一個測試集 (Test Set) 來評估不同 Prompt 對此類問題的準確率。", value: 5 }
-        ]
-    },
-    {
-        text: "你如何看待與 AI 的「對話」關係？",
-        options: [
-            { text: "它是搜尋引擎的替代品，我問它答。", value: 1 },
-            { text: "它是我的助理，幫我處理雜事。", value: 2 },
-            { text: "它是我的教練，我會要求它用蘇格拉底提問法來引導我思考。", value: 3 },
-            { text: "它是我的辯論對手，我會讓它扮演反方來挑戰我的觀點。", value: 4 },
-            { text: "它是我構建的系統中的一個模組，我更關注如何透過 API 調用它。", value: 5 }
-        ]
-    },
-    {
-        text: "面對一個複雜的長篇專案（如撰寫年度報告），你會？",
-        options: [
-            { text: "把所有資料一次丟進去，希望它能吐出奇蹟。", value: 1 },
-            { text: "分段請它撰寫，然後自己手動拼湊。", value: 2 },
-            { text: "使用「提示鏈接 (Prompt Chaining)」，將大綱、草稿、潤飾拆解為連續步驟。", value: 3 },
-            { text: "使用「密度鏈 (Chain of Density)」技巧，反覆優化摘要的資訊密度。", value: 4 },
-            { text: "設計一個 Agent Workflow，自動抓取數據、分析並生成報告。", value: 5 }
-        ]
-    },
-    {
-        text: "關於 AI 的安全與準確性，你的習慣是？",
-        options: [
-            { text: "完全相信 AI 給的答案。", value: 1 },
-            { text: "覺得怪怪的時候會去 Google 確認一下。", value: 2 },
-            { text: "習慣性進行事實查核，絕不輸入公司敏感個資。", value: 3 },
-            { text: "會在 System Prompt 中設定邊界條件 (Guardrails) 防止它胡說八道。", value: 4 },
-            { text: "熟悉 Prompt Injection 攻擊原理，並在系統設計層級進行防禦。", value: 5 }
-        ]
-    },
-    {
-        text: "你是否嘗試過「寫程式」或「自動化」？",
-        options: [
-            { text: "完全沒有，我是文科生，看不懂程式碼。", value: 1 },
-            { text: "會用 AI 解釋一段程式碼是什麼意思。", value: 2 },
-            { text: "會用 AI 寫 Excel 公式或簡單的 Python 腳本來處理資料。", value: 3 },
-            { text: "我常進行 Vibe Coding，用自然語言指揮 AI 完成整個專案的程式開發。", value: 4 },
-            { text: "我使用 DSPy 或類似框架來自動優化我的 Prompt 效能。", value: 5 }
-        ]
-    }
-];
-
-class App {
-    constructor() {
-        this.currentQ = 0;
-        this.score = 0;
-        this.answers = []; // Store values to analyze dimensions
-        this.ui = {
-            screens: {
-                welcome: document.getElementById('welcome-screen'),
-                quiz: document.getElementById('quiz-screen'),
-                result: document.getElementById('result-screen')
+    // --- Data ---
+    // 這裡模擬資料庫。在真實網站中，這會是一個完整的 JSON 檔案或資料庫。
+    // 基於您提供的文件，我們設定一些特定日期和通用模板。
+    
+    const devotionContent = {
+        "1-1": {
+            title: "回歸生命的本源",
+            scripture: "「神是我們存在及生命的本源，靈修就是學習去行自己的生命本源，原來是在慈愛與生命之神的裡面。」—— 歸心靜禱靈修集",
+            content: "各位朋友，新年平安。你認為祈禱是什麼？靈修又是什麼？\n\n祈禱是始於回歸心田，找到人內心深處的中心，交換整個人存在於神的靈在之中。在未來的一年中，歡迎你每天一起學習這種回歸心靈家園的禱告操練。\n\n今天的練習：\n1. 找一個安靜的地方。\n2. 無需刻意做什麼來親近神，神在你之內已經是一個事實。\n3. 帶著渴望回歸心靈家園的心，暫時放下其他事物，專心一意的臨在當下。"
+        },
+        "general": [
+            {
+                title: "與主同在的靜默",
+                scripture: "「你們要休息，要知道我是神。」(詩篇 46:10)",
+                content: "今天，我們練習歸心祈禱的四個步驟：\n\n1. 揀選一個聖字（Sacred Word），代表你對上帝在內住的同意。\n2. 舒適地坐下，閉上眼睛。\n3. 輕輕地在心中默誦這個聖字。\n4. 當意識到各種思緒、感覺或影像時，溫柔地回到聖字上。\n\n在這段時間裡，不是要『思考』神，而是與神『同在』。"
             },
-            progress: document.getElementById('progress-bar'),
-            questionCont: document.getElementById('question-container'),
-            nextBtn: document.getElementById('next-btn')
-        };
-    }
-
-    startQuiz() {
-        this.switchScreen('quiz');
-        this.renderQuestion();
-    }
-
-    switchScreen(name) {
-        Object.values(this.ui.screens).forEach(el => el.classList.remove('active'));
-        this.ui.screens[name].classList.add('active');
-    }
-
-    renderQuestion() {
-        const q = questions[this.currentQ];
-        
-        // Progress
-        const pct = ((this.currentQ) / questions.length) * 100;
-        this.ui.progress.style.width = `${pct}%`;
-
-        // HTML
-        let html = `
-            <h3>${this.currentQ + 1}. ${q.text}</h3>
-            <div class="options-group">
-        `;
-        
-        q.options.forEach((opt, idx) => {
-            html += `
-                <label class="option-label" onclick="app.selectOption(this, ${opt.value})">
-                    <div class="radio-indicator"></div>
-                    <span>${opt.text}</span>
-                </label>
-            `;
-        });
-        html += `</div>`;
-
-        this.ui.questionCont.innerHTML = html;
-        this.ui.nextBtn.disabled = true;
-        
-        // Add fade in animation
-        this.ui.questionCont.style.animation = 'none';
-        this.ui.questionCont.offsetHeight; /* trigger reflow */
-        this.ui.questionCont.style.animation = 'fadeIn 0.5s';
-    }
-
-    selectOption(el, val) {
-        // UI
-        document.querySelectorAll('.option-label').forEach(l => l.classList.remove('selected'));
-        el.classList.add('selected');
-        this.ui.nextBtn.disabled = false;
-        
-        // Store temp
-        this.tempVal = val;
-    }
-
-    nextQuestion() {
-        this.score += this.tempVal;
-        this.answers.push(this.tempVal);
-
-        if (this.currentQ < questions.length - 1) {
-            this.currentQ++;
-            this.renderQuestion();
-        } else {
-            this.calculateAndShowResult();
-        }
-    }
-
-    calculateAndShowResult() {
-        // Max score = 6 questions * 5 = 30
-        // Calculate average score (1-5)
-        const avg = this.score / questions.length;
-        let levelIndex = Math.floor(avg) - 1;
-        if (levelIndex < 0) levelIndex = 0;
-        if (levelIndex > 4) levelIndex = 4;
-
-        const levelData = levels[levelIndex];
-
-        // Fill UI
-        document.getElementById('result-level-num').textContent = `Level ${levelData.id}: ${levelData.title}`;
-        document.getElementById('result-title').textContent = levelData.subtitle;
-        document.getElementById('result-desc').textContent = levelData.desc;
-
-        // Recommendations
-        const recContainer = document.getElementById('recommendations-container');
-        recContainer.innerHTML = levelData.skills.map(skill => `
-            <div class="recommendation-box">
-                <h4><span class="skill-tag">${skill.tag}</span> ${skill.name}</h4>
-                <ul class="next-step-list">
-                    <li>${skill.content}</li>
-                </ul>
-            </div>
-        `).join('');
-
-        this.switchScreen('result');
-        this.drawRadar(this.answers);
-    }
-
-    drawRadar(answers) {
-        // Normalize answers for 5 dimensions (mapping 6 questions to 5 abstract dimensions for visualization)
-        // Dim 1: Prompting (Q1)
-        // Dim 2: Logic/Reasoning (Q2)
-        // Dim 3: Collaboration (Q3)
-        // Dim 4: Systems/Flow (Q4 + Q6)
-        // Dim 5: Safety/Eval (Q5)
-        
-        const data = [
-            answers[0], // Prompting
-            answers[1], // Logic
-            answers[2], // Collab
-            (answers[3] + answers[5]) / 2, // System
-            answers[4]  // Safety
-        ];
-        
-        const labels = ["提示工程", "邏輯推理", "協作思維", "系統構建", "安全評估"];
-        const container = document.getElementById('radar-container');
-        const width = 250;
-        const height = 250;
-        const cx = width / 2;
-        const cy = height / 2;
-        const radius = 90;
-        const sides = 5;
-
-        // Helper to get coordinates
-        const getPoint = (val, i) => {
-            const angle = (Math.PI * 2 * i) / sides - Math.PI / 2;
-            const r = (val / 5) * radius; // Max value is 5
-            return [cx + r * Math.cos(angle), cy + r * Math.sin(angle)];
-        };
-
-        // Generate Grid (Background)
-        let svgHtml = `<svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">`;
-        
-        // Draw 5 concentric pentagons
-        for (let level = 1; level <= 5; level++) {
-            let points = [];
-            for (let i = 0; i < sides; i++) {
-                points.push(getPoint(level, i).join(','));
+            {
+                title: "神操：原則與基礎",
+                scripture: "「人受造的目的，是為讚美、崇敬、事奉我們的主天主，因而拯救我們靈魂。」—— 依納爵神操",
+                content: "今天我們反省生命的基礎。\n世界上的一切都是為人而造的，是為幫助我們追求受造的目的。\n\n反省：\n我今天所使用的物質、時間、關係，是幫助我更親近天主，還是阻礙了我？\n我們對一切受造物，是否保持「平心」的態度？不重視健康甚於疾病，不重視財富甚於貧窮，只選擇那更能引我們達到受造目的之事物。"
+            },
+            {
+                title: "默觀：從看不透到使之成形",
+                scripture: "「我們如今彷彿對著鏡子觀看，模糊不清，到那時就要面對面了。」(哥林多前書 13:12)",
+                content: "靈修操練可以分為七個過程：\n靜候、默想、降服、潔淨、光照、合一、同行。\n\n今天的練習重點是「靜候 (Waiting)」：\n將眼目口舌等主動感官關閉，進入一個與外界隔絕的環境。這本身是最困難的，因為我們習慣了雜音。\n現在，請聆聽背景的音樂，將意志與情緒抽離，躲進內心的角落，等待真正的平靜來到。"
+            },
+            {
+                title: "聖詠的祈禱",
+                scripture: "「天主，求祢按祢的仁慈憐憫我。」(聖詠 51:3)",
+                content: "教宗方濟各提醒我們，聖詠是「祈禱的交響樂」。\n聖詠不僅是求恩，更是讚頌、感謝、哀訴與敘事。\n\n今天的練習：\n拿起聖經，閱讀一篇聖詠（例如聖詠23篇或51篇）。\n不只是閱讀，而是讓這些古老的禱詞成為你的禱詞。\n如果經文說「上主是我的牧者」，請你在心中對主說：「是的，祢是我的牧者，我信賴祢。」"
             }
-            svgHtml += `<polygon points="${points.join(' ')}" class="radar-bg" stroke-opacity="${level/5}"/>`;
-        }
+        ]
+    };
 
-        // Draw Data Area
-        let dataPoints = [];
-        for (let i = 0; i < sides; i++) {
-            dataPoints.push(getPoint(data[i], i).join(','));
-        }
-        svgHtml += `<polygon points="${dataPoints.join(' ')}" class="radar-area" />`;
+    // --- State ---
+    let currentDate = new Date('2026-01-01'); // Start date fixed to 2026
+    let isMusicPlaying = false;
+    let isBreathing = false;
+    let breathInterval;
+    let isSpeaking = false;
+    let timerInterval;
 
-        // Draw Labels
-        for (let i = 0; i < sides; i++) {
-            const angle = (Math.PI * 2 * i) / sides - Math.PI / 2;
-            const labelR = radius + 20;
-            const x = cx + labelR * Math.cos(angle);
-            const y = cy + labelR * Math.sin(angle);
-            svgHtml += `<text x="${x}" y="${y + 5}" class="radar-label">${labels[i]}</text>`;
-        }
-
-        svgHtml += `</svg>`;
-        container.innerHTML = svgHtml;
+    // --- Calendar Logic ---
+    function formatDate(date) {
+        return `${date.getFullYear()}年${date.getMonth() + 1}月${date.getDate()}日`;
     }
-}
 
-const app = new App();
+    function getKey(date) {
+        return `${date.getMonth() + 1}-${date.getDate()}`;
+    }
+
+    function changeDate(days) {
+        currentDate.setDate(currentDate.getDate() + days);
+        // Limit year to 2026 for this demo purpose, or allow flexibility
+        if (currentDate.getFullYear() !== 2026) {
+             // Optional: reset or alert, but let's allow flow
+        }
+        updateUI();
+    }
+
+    function updateUI() {
+        document.getElementById('currentDate').innerText = formatDate(currentDate);
+        
+        const key = getKey(currentDate);
+        let data = devotionContent[key];
+
+        // If no specific date content, cycle through generic templates based on day number
+        if (!data) {
+            const dayOfYear = Math.floor((currentDate - new Date(currentDate.getFullYear(), 0, 0)) / 1000 / 60 / 60 / 24);
+            const index = dayOfYear % devotionContent['general'].length;
+            data = devotionContent['general'][index];
+        }
+
+        // Update Text
+        const contentArea = document.getElementById('contentArea');
+        contentArea.style.opacity = 0;
+        
+        setTimeout(() => {
+            document.getElementById('dailyTitle').innerText = data.title;
+            document.getElementById('dailyScripture').innerText = data.scripture;
+            document.getElementById('dailyText').innerText = data.content;
+            contentArea.style.opacity = 1;
+        }, 300);
+
+        // Stop voice if changing date
+        if(isSpeaking) {
+            window.speechSynthesis.cancel();
+            isSpeaking = false;
+            document.getElementById('voiceBtn').innerHTML = '<i class="fas fa-microphone"></i> 開始導引';
+        }
+    }
+
+    // --- Breathing Logic ---
+    function toggleBreathing() {
+        const circle = document.getElementById('breathCircle');
+        const text = document.getElementById('breathText');
+        const btnText = document.getElementById('breathBtnText');
+        const btnIcon = document.getElementById('breathIcon');
+
+        if (isBreathing) {
+            // Stop
+            clearInterval(breathInterval);
+            circle.classList.remove('breathe-anim');
+            circle.innerText = "吸氣";
+            text.innerText = "準備開始...";
+            btnText.innerText = "開始呼吸練習";
+            btnIcon.className = "fas fa-play";
+            isBreathing = false;
+        } else {
+            // Start
+            circle.classList.add('breathe-anim');
+            btnText.innerText = "停止練習";
+            btnIcon.className = "fas fa-stop";
+            isBreathing = true;
+            
+            // Sync text with animation (8s total: 4s in, 4s out)
+            let isInhale = true;
+            text.innerText = "用鼻子深深吸氣...";
+            circle.innerText = "吸氣";
+
+            breathInterval = setInterval(() => {
+                isInhale = !isInhale;
+                if (isInhale) {
+                    text.innerText = "用鼻子深深吸氣...";
+                    circle.innerText = "吸氣";
+                } else {
+                    text.innerText = "用嘴巴慢慢吐氣...";
+                    circle.innerText = "吐氣";
+                }
+            }, 4000);
+        }
+    }
+
+    // --- Audio Logic ---
+    function toggleMusic() {
+        const audio = document.getElementById('bgMusic');
+        const btn = document.getElementById('musicBtn');
+        
+        if (isMusicPlaying) {
+            audio.pause();
+            btn.innerHTML = '<i class="fas fa-play"></i> 播放音樂';
+            btn.classList.remove('playing');
+        } else {
+            audio.volume = 0.5;
+            audio.play().catch(e => alert("請先與頁面互動以播放音訊"));
+            btn.innerHTML = '<i class="fas fa-pause"></i> 暫停音樂';
+            btn.classList.add('playing');
+        }
+        isMusicPlaying = !isMusicPlaying;
+    }
+
+    // --- Voice Guide (Text to Speech) ---
+    function toggleVoiceGuide() {
+        if (!window.speechSynthesis) {
+            alert("您的瀏覽器不支援語音導航功能。");
+            return;
+        }
+
+        if (isSpeaking) {
+            window.speechSynthesis.cancel();
+            isSpeaking = false;
+            document.getElementById('voiceBtn').innerHTML = '<i class="fas fa-microphone"></i> 開始導引';
+            document.getElementById('voiceBtn').classList.remove('playing');
+        } else {
+            const title = document.getElementById('dailyTitle').innerText;
+            const scripture = document.getElementById('dailyScripture').innerText;
+            const content = document.getElementById('dailyText').innerText;
+            
+            // Create utterance
+            const textToRead = `今日靈修：${title}。${scripture}。導引內容：${content}`;
+            const utterance = new SpeechSynthesisUtterance(textToRead);
+            utterance.lang = 'zh-TW'; // Traditional Chinese
+            utterance.rate = 0.9; // Slower pace for meditation
+            
+            utterance.onend = () => {
+                isSpeaking = false;
+                document.getElementById('voiceBtn').innerHTML = '<i class="fas fa-microphone"></i> 開始導引';
+                document.getElementById('voiceBtn').classList.remove('playing');
+            };
+
+            window.speechSynthesis.speak(utterance);
+            isSpeaking = true;
+            document.getElementById('voiceBtn').innerHTML = '<i class="fas fa-stop"></i> 停止導引';
+            document.getElementById('voiceBtn').classList.add('playing');
+        }
+    }
+
+    // --- Timer Logic (Centering Prayer) ---
+    function startCenteringPrayer() {
+        showModal('centeringModal');
+        let timeLeft = 20 * 60; // 20 minutes in seconds
+        const display = document.getElementById('timerDisplay');
+        const status = document.getElementById('timerStatus');
+        
+        // Reset
+        clearInterval(timerInterval);
+        display.innerText = "20:00";
+        status.innerText = "歸回安息...";
+
+        // Simple countdown
+        timerInterval = setInterval(() => {
+            timeLeft--;
+            const m = Math.floor(timeLeft / 60);
+            const s = timeLeft % 60;
+            display.innerText = `${m}:${s < 10 ? '0' + s : s}`;
+            
+            if (timeLeft <= 0) {
+                clearInterval(timerInterval);
+                status.innerText = "祈禱結束。感謝主。";
+                // Play a soft bell sound if possible (omitted for single file simplicity)
+            }
+        }, 1000);
+    }
+
+    function stopTimer() {
+        clearInterval(timerInterval);
+        closeModal('centeringModal');
+    }
+
+    // --- Modal Logic ---
+    function showModal(id) {
+        document.getElementById(id).style.display = 'flex';
+    }
+
+    function closeModal(id) {
+        document.getElementById(id).style.display = 'none';
+    }
+
+    // Initialize
+    window.onload = function() {
+        updateUI();
+        // Check for saved preferences or state could go here
+    };
+
+    // Close modal when clicking outside
+    window.onclick = function(event) {
+        if (event.target.classList.contains('modal')) {
+            event.target.style.display = "none";
+            if (event.target.id === 'centeringModal') clearInterval(timerInterval);
+        }
+    }
 </script>
 
 </body>
