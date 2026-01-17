@@ -1,4 +1,616 @@
-import React, { useState } from 'react';
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI 成熟度評估 (AI Maturity Assessment)</title>
+    <style>
+        /* --- Dark Mode Aesthetic Theme (Tailwind-like) --- */
+        :root {
+            --bg-primary: #0f172a;    /* Slate 900 */
+            --bg-secondary: #1e293b;  /* Slate 800 */
+            --bg-accent: #334155;     /* Slate 700 */
+            --text-primary: #f8fafc;  /* Slate 50 */
+            --text-secondary: #94a3b8;/* Slate 400 */
+            --primary: #6366f1;       /* Indigo 500 */
+            --primary-hover: #4f46e5; /* Indigo 600 */
+            --success: #10b981;       /* Emerald 500 */
+            --warning: #f59e0b;       /* Amber 500 */
+            --danger: #ef4444;        /* Red 500 */
+            --radius: 16px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 650px;
+            position: relative;
+        }
+
+        /* --- Animations --- */
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* --- Cards --- */
+        .card {
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--bg-accent);
+            border-radius: var(--radius);
+            padding: 2rem;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+            display: none;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        .card.active { display: block; }
+
+        /* --- Typography --- */
+        h1 {
+            font-size: 1.8rem;
+            font-weight: 800;
+            text-align: center;
+            margin-bottom: 2rem;
+            background: linear-gradient(135deg, #818cf8 0%, #c084fc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        h2 { font-size: 1.5rem; margin-bottom: 1rem; color: var(--text-primary); }
+        h3 { font-size: 1.1rem; margin-bottom: 1rem; font-weight: 600; color: var(--text-primary); }
+        p { color: var(--text-secondary); margin-bottom: 1.5rem; }
+
+        /* --- Buttons --- */
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 14px;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+
+        .btn:hover { background-color: var(--primary-hover); transform: translateY(-2px); }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+        .btn-outline { background: transparent; border: 2px solid var(--bg-accent); margin-top: 10px; }
+        .btn-outline:hover { border-color: var(--primary); background: rgba(99, 102, 241, 0.1); }
+
+        /* --- Quiz Options --- */
+        .options-group { display: flex; flex-direction: column; gap: 12px; }
+
+        .option-label {
+            display: flex;
+            align-items: center;
+            padding: 16px;
+            background-color: rgba(15, 23, 42, 0.5);
+            border: 2px solid var(--bg-accent);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .option-label:hover { border-color: var(--primary); background-color: rgba(99, 102, 241, 0.05); }
+        .option-label.selected { border-color: var(--primary); background-color: rgba(99, 102, 241, 0.1); }
+
+        .radio-indicator {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--text-secondary);
+            border-radius: 50%;
+            margin-right: 15px;
+            flex-shrink: 0;
+            position: relative;
+        }
+
+        .option-label.selected .radio-indicator { border-color: var(--primary); }
+        .option-label.selected .radio-indicator::after {
+            content: '';
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 10px; height: 10px;
+            background-color: var(--primary);
+            border-radius: 50%;
+        }
+
+        input[type="radio"] { display: none; }
+
+        /* --- Progress Bar --- */
+        .progress-track {
+            height: 6px;
+            background-color: var(--bg-accent);
+            border-radius: 10px;
+            margin-bottom: 2rem;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), #a855f7);
+            width: 0%;
+            transition: width 0.4s ease;
+        }
+
+        /* --- Result Section --- */
+        .result-header { text-align: center; margin-bottom: 2rem; }
+        .level-badge {
+            display: inline-block;
+            padding: 6px 16px;
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--success);
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .radar-chart-container {
+            width: 100%;
+            height: 250px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        /* SVG Styles */
+        svg { overflow: visible; }
+        .radar-bg { fill: none; stroke: var(--bg-accent); stroke-width: 1; }
+        .radar-area { fill: rgba(99, 102, 241, 0.2); stroke: var(--primary); stroke-width: 2; }
+        .radar-label { font-size: 10px; fill: var(--text-secondary); text-anchor: middle; }
+
+        /* Recommendations */
+        .recommendation-box {
+            background-color: rgba(15, 23, 42, 0.6);
+            border-left: 4px solid var(--primary);
+            padding: 1.5rem;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 1.5rem;
+        }
+        
+        .recommendation-box h4 {
+            color: var(--text-primary);
+            margin-bottom: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .skill-tag {
+            font-size: 0.75rem;
+            background: var(--bg-accent);
+            padding: 2px 8px;
+            border-radius: 4px;
+            color: #a5b4fc;
+        }
+
+        .next-step-list {
+            list-style: none;
+        }
+        
+        .next-step-list li {
+            position: relative;
+            padding-left: 20px;
+            margin-bottom: 10px;
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        .next-step-list li::before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            color: var(--primary);
+        }
+
+        /* Mobile Adjustments */
+        @media (max-width: 480px) {
+            .card { padding: 1.5rem; }
+            h1 { font-size: 1.5rem; }
+            .option-label { padding: 12px; }
+            .radar-chart-container { height: 200px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>AI Maturity Assessment</h1>
+
+    <!-- 1. Welcome Screen -->
+    <div id="welcome-screen" class="card active">
+        <div style="text-align: center; margin-bottom: 2rem;">
+            <div style="font-size: 4rem; margin-bottom: 1rem;">🧠</div>
+            <h2>你的 AI 成熟度在哪個層級？</h2>
+            <p>這不僅僅是一個測驗，這是一份升級指南。從「探索者」到「構建者」，我們將根據 5 級 AI 成熟度架構，分析你目前的落點並提供具體的學習建議。</p>
+        </div>
+        
+        <div style="background: var(--bg-primary); padding: 1.5rem; border-radius: 12px; margin-bottom: 2rem;">
+            <h3 style="font-size: 0.95rem; margin-bottom: 0.5rem; opacity: 0.9;">測驗內容涵蓋：</h3>
+            <ul style="padding-left: 1.5rem; color: var(--text-secondary); font-size: 0.9rem;">
+                <li>提示工程 (Prompt Engineering) 能力</li>
+                <li>系統思維與工作流整合</li>
+                <li>AI 評估與風險意識</li>
+            </ul>
+        </div>
+
+        <button class="btn" onclick="app.startQuiz()">開始評估</button>
+    </div>
+
+    <!-- 2. Quiz Screen -->
+    <div id="quiz-screen" class="card">
+        <div class="progress-track">
+            <div id="progress-bar" class="progress-fill"></div>
+        </div>
+
+        <div id="question-container">
+            <!-- Question Rendered Here -->
+        </div>
+
+        <button id="next-btn" class="btn" style="margin-top: 2rem;" onclick="app.nextQuestion()" disabled>下一題</button>
+    </div>
+
+    <!-- 3. Result Screen -->
+    <div id="result-screen" class="card">
+        <div class="result-header">
+            <span class="level-badge" id="result-level-num">Level Calculating...</span>
+            <h2 id="result-title">分析完成</h2>
+            <p id="result-desc">以下是您的能力雷達圖與下一步學習建議。</p>
+        </div>
+
+        <!-- Radar Chart -->
+        <div class="radar-chart-container" id="radar-container">
+            <!-- SVG Rendered via JS -->
+        </div>
+
+        <div style="margin-bottom: 2rem;">
+            <h3 style="border-bottom: 1px solid var(--bg-accent); padding-bottom: 10px; margin-bottom: 1.5rem;">🚀 您的升級路徑 (Next Steps)</h3>
+            <div id="recommendations-container">
+                <!-- Recommendations Rendered Here -->
+            </div>
+        </div>
+
+        <button class="btn" onclick="location.reload()">重新測驗</button>
+    </div>
+</div>
+
+<script>
+/**
+ * Data Source: 5-Level AI Maturity Framework
+ * Based on user-provided NotebookLM research content.
+ */
+
+const levels = [
+    {
+        id: 1,
+        title: "探索者 (The Explorer)",
+        subtitle: "升級目標：應用者 (Adopter)",
+        desc: "你還處於隨意聊天的階段。下一步是學會結構化指令，從「好玩」轉向「可用」。",
+        skills: [
+            { name: "結構化提示詞", tag: "必學", content: "學習 CO-STAR 框架。不要只說「幫我寫信」，要定義背景、風格、受眾。" },
+            { name: "角色扮演", tag: "進階", content: "指定 AI 身份（如 ESG 顧問），讓它模擬特定視角。" },
+            { name: "事實查核", tag: "素養", content: "養成查證習慣，建立對 AI 幻覺的辨識能力。" }
+        ]
+    },
+    {
+        id: 2,
+        title: "應用者 (The Adopter)",
+        subtitle: "升級目標：整合者 (Integrator)",
+        desc: "你已能完成單點任務。下一步是將 AI 嵌入工作流，並處理複雜邏輯。",
+        skills: [
+            { name: "提示鏈接 (Chaining)", tag: "核心", content: "將大任務拆解：大綱 → 草稿 → 格式化。這是模組化思考的基礎。" },
+            { name: "少樣本提示 (Few-Shot)", tag: "技巧", content: "提供 2-5 個範例讓 AI 模仿，比零範例 (Zero-shot) 更有效。" },
+            { name: "思維鏈 (CoT)", tag: "邏輯", content: "要求 AI「一步步思考」，減少數學或推理錯誤。" }
+        ]
+    },
+    {
+        id: 3,
+        title: "整合者 (The Integrator)",
+        subtitle: "升級目標：協作者 (Collaborator)",
+        desc: "你已將 AI 視為工具。下一步是將其視為「夥伴」，利用它突破思維盲點。",
+        skills: [
+            { name: "多重角色辯論", tag: "策略", content: "讓 AI 同時扮演正反方（如創業者 vs 財務長）進行辯論，避免順從偏誤。" },
+            { name: "蘇格拉底提問", tag: "思維", content: "要求 AI「以教練方式引導我」，反問你問題而非直接給答案。" },
+            { name: "密度鏈 (CoD)", tag: "優化", content: "透過遞迴優化，在字數不變下塞入更多實體資訊，提升內容含金量。" }
+        ]
+    },
+    {
+        id: 4,
+        title: "協作者 (The Collaborator)",
+        subtitle: "升級目標：構建者 (Builder)",
+        desc: "你已能與 AI 深度協作。下一步是具備「工程思維」，開始構建穩定的系統。",
+        skills: [
+            { name: "系統指令 (System Prompt)", tag: "架構", content: "不僅是聊天，而是設定全域行為規範與邊界條件 (Guardrails)。" },
+            { name: "AI 輔助編碼", tag: "Vibe Coding", content: "即使不是工程師，也要能用自然語言引導 AI 寫出自動化腳本。" },
+            { name: "評估測試 (Evals)", tag: "量化", content: "建立測試集 (Test Sets)，客觀衡量 Prompt 效果，而非憑感覺。" }
+        ]
+    },
+    {
+        id: 5,
+        title: "構建者 (The Builder)",
+        subtitle: "邁向：架構師 (Architect)",
+        desc: "你已具備構建能力。下一步是規模化、自動化優化以及安全治理。",
+        skills: [
+            { name: "自動化優化 (DSPy)", tag: "前沿", content: "將提示工程視為編譯問題，讓演算法自動優化 Prompt。" },
+            { name: "成本效能權衡", tag: "經濟", content: "分析 Token 消耗與模型表現，選擇最優模型組合。" },
+            { name: "AI 安全", tag: "治理", content: "防禦 Prompt Injection，設計 Input/Output 過濾機制。" }
+        ]
+    }
+];
+
+// Questions mapped to the 5 levels concept
+// 1-2pts: Explorer/Adopter mindset
+// 3-4pts: Integrator/Collaborator mindset
+// 5pts: Builder mindset
+const questions = [
+    {
+        text: "當你需要 AI 幫你寫一封重要的商業郵件時，你通常會怎麼做？",
+        options: [
+            { text: "直接說：「幫我寫一封給客戶的信。」", value: 1 },
+            { text: "會加上背景資訊，例如：「我是行銷經理，要寫給潛在客戶...」", value: 2 },
+            { text: "使用特定框架 (如 CO-STAR)，明確定義語氣、受眾、格式限制。", value: 3 },
+            { text: "提供 3 個過去成功的郵件範例 (Few-Shot)，要求它模仿風格。", value: 4 },
+            { text: "我有一套自動化流程，輸入關鍵字後，系統依據客戶畫像自動生成。", value: 5 }
+        ]
+    },
+    {
+        text: "遇到 AI 回答數學或邏輯問題出錯時，你的反應是？",
+        options: [
+            { text: "覺得 AI 很笨，放棄使用。", value: 1 },
+            { text: "重新問一次，看看運氣會不會好一點。", value: 2 },
+            { text: "要求它「請一步步思考 (Let's think step by step)」來展示推理過程。", value: 3 },
+            { text: "我會檢查我的 Prompt 是否有歧義，並嘗試引導它自我修正。", value: 4 },
+            { text: "我會建立一個測試集 (Test Set) 來評估不同 Prompt 對此類問題的準確率。", value: 5 }
+        ]
+    },
+    {
+        text: "你如何看待與 AI 的「對話」關係？",
+        options: [
+            { text: "它是搜尋引擎的替代品，我問它答。", value: 1 },
+            { text: "它是我的助理，幫我處理雜事。", value: 2 },
+            { text: "它是我的教練，我會要求它用蘇格拉底提問法來引導我思考。", value: 3 },
+            { text: "它是我的辯論對手，我會讓它扮演反方來挑戰我的觀點。", value: 4 },
+            { text: "它是我構建的系統中的一個模組，我更關注如何透過 API 調用它。", value: 5 }
+        ]
+    },
+    {
+        text: "面對一個複雜的長篇專案（如撰寫年度報告），你會？",
+        options: [
+            { text: "把所有資料一次丟進去，希望它能吐出奇蹟。", value: 1 },
+            { text: "分段請它撰寫，然後自己手動拼湊。", value: 2 },
+            { text: "使用「提示鏈接 (Prompt Chaining)」，將大綱、草稿、潤飾拆解為連續步驟。", value: 3 },
+            { text: "使用「密度鏈 (Chain of Density)」技巧，反覆優化摘要的資訊密度。", value: 4 },
+            { text: "設計一個 Agent Workflow，自動抓取數據、分析並生成報告。", value: 5 }
+        ]
+    },
+    {
+        text: "關於 AI 的安全與準確性，你的習慣是？",
+        options: [
+            { text: "完全相信 AI 給的答案。", value: 1 },
+            { text: "覺得怪怪的時候會去 Google 確認一下。", value: 2 },
+            { text: "習慣性進行事實查核，絕不輸入公司敏感個資。", value: 3 },
+            { text: "會在 System Prompt 中設定邊界條件 (Guardrails) 防止它胡說八道。", value: 4 },
+            { text: "熟悉 Prompt Injection 攻擊原理，並在系統設計層級進行防禦。", value: 5 }
+        ]
+    },
+    {
+        text: "你是否嘗試過「寫程式」或「自動化」？",
+        options: [
+            { text: "完全沒有，我是文科生，看不懂程式碼。", value: 1 },
+            { text: "會用 AI 解釋一段程式碼是什麼意思。", value: 2 },
+            { text: "會用 AI 寫 Excel 公式或簡單的 Python 腳本來處理資料。", value: 3 },
+            { text: "我常進行 Vibe Coding，用自然語言指揮 AI 完成整個專案的程式開發。", value: 4 },
+            { text: "我使用 DSPy 或類似框架來自動優化我的 Prompt 效能。", value: 5 }
+        ]
+    }
+];
+
+class App {
+    constructor() {
+        this.currentQ = 0;
+        this.score = 0;
+        this.answers = []; // Store values to analyze dimensions
+        this.ui = {
+            screens: {
+                welcome: document.getElementById('welcome-screen'),
+                quiz: document.getElementById('quiz-screen'),
+                result: document.getElementById('result-screen')
+            },
+            progress: document.getElementById('progress-bar'),
+            questionCont: document.getElementById('question-container'),
+            nextBtn: document.getElementById('next-btn')
+        };
+    }
+
+    startQuiz() {
+        this.switchScreen('quiz');
+        this.renderQuestion();
+    }
+
+    switchScreen(name) {
+        Object.values(this.ui.screens).forEach(el => el.classList.remove('active'));
+        this.ui.screens[name].classList.add('active');
+    }
+
+    renderQuestion() {
+        const q = questions[this.currentQ];
+        
+        // Progress
+        const pct = ((this.currentQ) / questions.length) * 100;
+        this.ui.progress.style.width = `${pct}%`;
+
+        // HTML
+        let html = `
+            <h3>${this.currentQ + 1}. ${q.text}</h3>
+            <div class="options-group">
+        `;
+        
+        q.options.forEach((opt, idx) => {
+            html += `
+                <label class="option-label" onclick="app.selectOption(this, ${opt.value})">
+                    <div class="radio-indicator"></div>
+                    <span>${opt.text}</span>
+                </label>
+            `;
+        });
+        html += `</div>`;
+
+        this.ui.questionCont.innerHTML = html;
+        this.ui.nextBtn.disabled = true;
+        
+        // Add fade in animation
+        this.ui.questionCont.style.animation = 'none';
+        this.ui.questionCont.offsetHeight; /* trigger reflow */
+        this.ui.questionCont.style.animation = 'fadeIn 0.5s';
+    }
+
+    selectOption(el, val) {
+        // UI
+        document.querySelectorAll('.option-label').forEach(l => l.classList.remove('selected'));
+        el.classList.add('selected');
+        this.ui.nextBtn.disabled = false;
+        
+        // Store temp
+        this.tempVal = val;
+    }
+
+    nextQuestion() {
+        this.score += this.tempVal;
+        this.answers.push(this.tempVal);
+
+        if (this.currentQ < questions.length - 1) {
+            this.currentQ++;
+            this.renderQuestion();
+        } else {
+            this.calculateAndShowResult();
+        }
+    }
+
+    calculateAndShowResult() {
+        // Max score = 6 questions * 5 = 30
+        // Calculate average score (1-5)
+        const avg = this.score / questions.length;
+        let levelIndex = Math.floor(avg) - 1;
+        if (levelIndex < 0) levelIndex = 0;
+        if (levelIndex > 4) levelIndex = 4;
+
+        const levelData = levels[levelIndex];
+
+        // Fill UI
+        document.getElementById('result-level-num').textContent = `Level ${levelData.id}: ${levelData.title}`;
+        document.getElementById('result-title').textContent = levelData.subtitle;
+        document.getElementById('result-desc').textContent = levelData.desc;
+
+        // Recommendations
+        const recContainer = document.getElementById('recommendations-container');
+        recContainer.innerHTML = levelData.skills.map(skill => `
+            <div class="recommendation-box">
+                <h4><span class="skill-tag">${skill.tag}</span> ${skill.name}</h4>
+                <ul class="next-step-list">
+                    <li>${skill.content}</li>
+                </ul>
+            </div>
+        `).join('');
+
+        this.switchScreen('result');
+        this.drawRadar(this.answers);
+    }
+
+    drawRadar(answers) {
+        // Normalize answers for 5 dimensions (mapping 6 questions to 5 abstract dimensions for visualization)
+        // Dim 1: Prompting (Q1)
+        // Dim 2: Logic/Reasoning (Q2)
+        // Dim 3: Collaboration (Q3)
+        // Dim 4: Systems/Flow (Q4 + Q6)
+        // Dim 5: Safety/Eval (Q5)
+        
+        const data = [
+            answers[0], // Prompting
+            answers[1], // Logic
+            answers[2], // Collab
+            (answers[3] + answers[5]) / 2, // System
+            answers[4]  // Safety
+        ];
+        
+        const labels = ["提示工程", "邏輯推理", "協作思維", "系統構建", "安全評估"];
+        const container = document.getElementById('radar-container');
+        const width = 250;
+        const height = 250;
+        const cx = width / 2;
+        const cy = height / 2;
+        const radius = 90;
+        const sides = 5;
+
+        // Helper to get coordinates
+        const getPoint = (val, i) => {
+            const angle = (Math.PI * 2 * i) / sides - Math.PI / 2;
+            const r = (val / 5) * radius; // Max value is 5
+            return [cx + r * Math.cos(angle), cy + r * Math.sin(angle)];
+        };
+
+        // Generate Grid (Background)
+        let svgHtml = `<svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">`;
+        
+        // Draw 5 concentric pentagons
+        for (let level = 1; level <= 5; level++) {
+            let points = [];
+            for (let i = 0; i < sides; i++) {
+                points.push(getPoint(level, i).join(','));
+            }
+            svgHtml += `<polygon points="${points.join(' ')}" class="radar-bg" stroke-opacity="${level/5}"/>`;
+        }
+
+        // Draw Data Area
+        let dataPoints = [];
+        for (let i = 0; i < sides; i++) {
+            dataPoints.push(getPoint(data[i], i).join(','));
+        }
+        svgHtml += `<polygon points="${dataPoints.join(' ')}" class="radar-area" />`;
+
+        // Draw Labels
+        for (let i = 0; i < sides; i++) {
+            const angle = (Math.PI * 2 * i) / sides - Math.PI / 2;
+            const labelR = radius + 20;
+            const x = cx + labelR * Math.cos(angle);
+            const y = cy + labelR * Math.sin(angle);
+            svgHtml += `<text x="${x}" y="${y + 5}" class="radar-label">${labels[i]}</text>`;
+        }
+
+        svgHtml += `</svg>`;
+        container.innerHTML = svgHtml;
+    }
+}
+
+const app = new App();
+</script>
+
+</body>
+</html>import React, { useState } from 'react';
 import { ChevronRight, ChevronLeft, Sun, Hand, Heart, ShieldCheck, BookOpen, Sparkles, Coffee, ExternalLink } from 'lucide-react';
 
 const Presentation = () => {
